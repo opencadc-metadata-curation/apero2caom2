@@ -61,66 +61,28 @@
 #  <http://www.gnu.org/licenses/>.      pas le cas, consultez :
 #                                       <http://www.gnu.org/licenses/>.
 #
-#  $Revision: 4 $
+#  : 4 $
 #
 # ***********************************************************************
 #
 
-"""
-Implements the default entry point functions for the workflow 
-application.
 
-'run' executes based on either provided lists of work, or files on disk.
-'run_incremental' executes incrementally, usually based on time-boxed intervals.
-"""
-
-import logging
-import sys
-import traceback
-
-from caom2pipe.run_composable import run_by_state_runner_meta, run_by_todo_runner_meta
-from blank2caom2 import file2caom2_augmentation
+from caom2pipe import caom_composable as cc
+from apero2caom2 import main_app
 
 
-META_VISITORS = [file2caom2_augmentation]
-DATA_VISITORS = []
+__all__ = ['APEROFits2caom2Visitor']
 
 
-def _run():
-    """
-    Uses a todo file to identify the work to be done.
+class APEROFits2caom2Visitor(cc.Fits2caom2VisitorRunnerMeta):
+    def __init__(self, observation, **kwargs):
+        super().__init__(observation, **kwargs)
 
-    :return 0 if successful, -1 if there's any sort of failure. Return status
-        is used by airflow for task instance management and reporting.
-    """
-    return run_by_todo_runner_meta(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
-
-
-def run():
-    """Wraps _run in exception handling, with sys.exit calls."""
-    try:
-        result = _run()
-        sys.exit(result)
-    except Exception as e:
-        logging.error(e)
-        tb = traceback.format_exc()
-        logging.debug(tb)
-        sys.exit(-1)
+    def _get_mappings(self, dest_uri):
+        return [main_app.APEROMapping(
+            self._storage_name, self._clients, self._reporter, self._observation, self._config
+        )]
 
 
-def _run_incremental():
-    """Uses a state file with a timestamp to identify the work to be done.
-    """
-    return run_by_state_runner_meta(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
-
-
-def run_incremental():
-    """Wraps _run_incremental in exception handling."""
-    try:
-        _run_incremental()
-        sys.exit(0)
-    except Exception as e:
-        logging.error(e)
-        tb = traceback.format_exc()
-        logging.debug(tb)
-        sys.exit(-1)
+def visit(observation, **kwargs):
+    return APEROFits2caom2Visitor(observation, **kwargs).visit()

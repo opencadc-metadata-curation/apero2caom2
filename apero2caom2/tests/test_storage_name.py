@@ -61,28 +61,37 @@
 #  <http://www.gnu.org/licenses/>.      pas le cas, consultez :
 #                                       <http://www.gnu.org/licenses/>.
 #
-#  : 4 $
+#  $Revision: 4 $
 #
 # ***********************************************************************
 #
 
-
-from caom2pipe import caom_composable as cc
-from blank2caom2 import main_app
-
-
-__all__ = ['BlankFits2caom2Visitor']
+from caom2pipe import manage_composable as mc
+from apero2caom2 import APEROName
 
 
-class BlankFits2caom2Visitor(cc.Fits2caom2VisitorRunnerMeta):
-    def __init__(self, observation, **kwargs):
-        super().__init__(observation, **kwargs)
+def test_is_valid():
+    assert APEROName('anything').is_valid()
+    
 
-    def _get_mappings(self, dest_uri):
-        return [main_app.BlankMapping(
-            self._storage_name, self._clients, self._reporter, self._observation, self._config
-        )]
+def test_storage_name(test_config):
+    test_obs_id = 'TEST_OBS_ID'
+    test_f_name = f'{test_obs_id}.fits'
+    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
+    for index, entry in enumerate(
+        [
+            test_f_name, 
+            test_uri, 
+            f'https://localhost:8020/{test_f_name}', 
+            f'vos:goliaths/test/{test_f_name}',
+            f'/tmp/{test_f_name}',
+        ]   
+    ):
+        test_subject = APEROName([entry])
+        assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
+        assert test_subject.file_uri == test_uri, f'wrong uri {index}'
+        assert test_subject.obs_id == test_obs_id, f'wrong obs id {index}'
+        assert test_subject.product_id == test_obs_id, f'wrong product id {index}'
+        assert test_subject.source_names == [entry], f'wrong source names {index}'
+        assert test_subject.destination_uris == [test_uri], f'wrong uris {index} {test_subject}'
 
-
-def visit(observation, **kwargs):
-    return BlankFits2caom2Visitor(observation, **kwargs).visit()

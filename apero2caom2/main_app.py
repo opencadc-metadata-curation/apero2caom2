@@ -66,60 +66,62 @@
 # ***********************************************************************
 #
 
-from mock import patch
+"""
+This module implements the ObsBlueprint mapping, as well as the workflow 
+entry point that executes the workflow.
+"""
 
-from blank2caom2 import file2caom2_augmentation, main_app
-from cadcdata import FileInfo
-from caom2.diff import get_differences
-from caom2pipe import astro_composable as ac
+from os.path import basename
+
+from caom2pipe import caom_composable as cc
 from caom2pipe import manage_composable as mc
 
-import glob
-import os
+
+__all__ = [
+    'APEROMapping',
+    'APEROName',
+]
 
 
-def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/*.fits.header')
-    metafunc.parametrize('test_name', obs_id_list)
+class APEROName(mc.StorageName):
+    """Naming rules:
+    - support mixed-case file name storage, and mixed-case obs id values
+    - support uncompressed files in storage
+    """
+
+    BLANK_NAME_PATTERN = '*'
+
+    def __init__(self, source_names):
+        super().__init__(source_names=source_names)
+
+    def is_valid(self):
+        return True
 
 
-def test_main_app(test_name, test_config, tmp_path, change_test_dir):
-    test_config.change_working_directory(tmp_path.as_posix())
-    storage_name = main_app.BlankName([test_name])
-    FileInfo(id=storage_name.file_uri, file_type='application/fits')
-    headers = ac.make_headers_from_file(test_name)
-    storage_name.file_info = {storage_name.file_uri: file_info}
-    storage_name.metadata = {storage_name.file_uri: headers}
-    test_reporter = ExecutionReporter2(test_config)
-    kwargs = {
-        'storage_name': storage_name,
-        'reporter': test_reporter,
-        'config': test_config,
-    }
-    expected_fqn = test_name.replace('.fits.header', '.expected.xml')
-    in_fqn = expected_fqn.replace('.expected', '.in')
-    actual_fqn = expected_fqn.replace('expected', 'actual')
-    if os.path.exists(actual_fqn):
-        os.unlink(actual_fqn)
-    observation = None
-    if os.path.exists(in_fqn):
-        observation = mc.read_obs_from_file(in_fqn)
-    observation = file2caom2_augmentation.visit(observation, **kwargs)
-    if observation is None:
-        assert False, f'Did not create observation for {test_name}'
-    else:
-        if os.path.exists(expected_fqn):
-            expected = mc.read_obs_from_file(expected_fqn)
-            compare_result = get_differences(expected, observation)
-            if compare_result is not None:
-                mc.write_obs_to_file(observation, actual_fqn)
-                compare_text = '\n'.join([r for r in compare_result])
-                msg = (
-                    f'Differences found in observation {expected.observation_id}\n'
-                    f'{compare_text}'
-                )
-                raise AssertionError(msg)
-        else:
-            mc.write_obs_to_file(observation, actual_fqn)
-            assert False, f'nothing to compare to for {test_name}, missing {expected_fqn}'
-    # assert False  # cause I want to see logging messages
+class APEROMapping(cc.TelescopeMapping2):
+
+    def accumulate_blueprint(self, bp):
+        """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
+        self._logger.debug('Begin accumulate_bp.')
+        super().accumulate_blueprint(bp)
+
+        bp.set('Plane.calibrationLevel', 1)
+        bp.set('Plane.dataProductType', 'image')
+        bp.set('Artifact.productType', 'science')
+        bp.set('Artifact.releaseType', 'data')
+
+        bp.configure_position_axes((1, 2))
+        bp.configure_time_axis(3)
+        bp.configure_energy_axis(4)
+        bp.configure_polarization_axis(5)
+        bp.configure_observable_axis(6)
+        self._logger.debug('Done accumulate_bp.')
+
+    def update(self):
+        """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes 
+        and CAOM attributes).
+        """
+        return super().update()
+
+    def _update_artifact(self, artifact):
+        pass
