@@ -66,32 +66,61 @@
 # ***********************************************************************
 #
 
-from caom2pipe import manage_composable as mc
-from blank2caom2 import BlankName
+"""
+Implements the default entry point functions for the workflow 
+application.
+
+'run' executes based on either provided lists of work, or files on disk.
+'run_incremental' executes incrementally, usually based on time-boxed intervals.
+"""
+
+import logging
+import sys
+import traceback
+
+from caom2pipe.run_composable import run_by_state_runner_meta, run_by_todo_runner_meta
+from apero2caom2 import file2caom2_augmentation
 
 
-def test_is_valid():
-    assert BlankName('anything').is_valid()
-    
+META_VISITORS = [file2caom2_augmentation]
+DATA_VISITORS = []
 
-def test_storage_name(test_config):
-    test_obs_id = 'TEST_OBS_ID'
-    test_f_name = f'{test_obs_id}.fits'
-    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
-    for index, entry in enumerate(
-        [
-            test_f_name, 
-            test_uri, 
-            f'https://localhost:8020/{test_f_name}', 
-            f'vos:goliaths/test/{test_f_name}',
-            f'/tmp/{test_f_name}',
-        ]   
-    ):
-        test_subject = BlankName([entry])
-        assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
-        assert test_subject.file_uri == test_uri, f'wrong uri {index}'
-        assert test_subject.obs_id == test_obs_id, f'wrong obs id {index}'
-        assert test_subject.product_id == test_obs_id, f'wrong product id {index}'
-        assert test_subject.source_names == [entry], f'wrong source names {index}'
-        assert test_subject.destination_uris == [test_uri], f'wrong uris {index} {test_subject}'
 
+def _run():
+    """
+    Uses a todo file to identify the work to be done.
+
+    :return 0 if successful, -1 if there's any sort of failure. Return status
+        is used by airflow for task instance management and reporting.
+    """
+    return run_by_todo_runner_meta(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
+
+
+def run():
+    """Wraps _run in exception handling, with sys.exit calls."""
+    try:
+        result = _run()
+        sys.exit(result)
+    except Exception as e:
+        logging.error(e)
+        tb = traceback.format_exc()
+        logging.debug(tb)
+        sys.exit(-1)
+
+
+def _run_incremental():
+    """Uses a state file with a timestamp to identify the work to be done.
+    """
+    return run_by_state_runner_meta(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
+
+
+def run_incremental():
+    """Wraps _run_incremental in exception handling."""
+    try:
+        _run_incremental()
+        sys.exit(0)
+    except Exception as e:
+        logging.error(e)
+        tb = traceback.format_exc()
+        logging.debug(tb)
+        sys.exit(-1)

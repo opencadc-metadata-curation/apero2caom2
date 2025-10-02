@@ -68,36 +68,58 @@
 
 from mock import patch
 
+from apero2caom2 import file2caom2_augmentation, main_app
+from cadcdata import FileInfo
+from caom2.diff import get_differences
+from caom2pipe import astro_composable as ac
 from caom2pipe import manage_composable as mc
-from blank2caom2 import composable
+
+import glob
+import os
 
 
-@patch('caom2pipe.client_composable.ClientCollection')
-@patch('caom2pipe.execute_composable.OrganizeExecutesRunnerMeta.do_one')
-def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
-    do_one_mock.return_value = (0, None)
-    test_f_id = 'test_file_id'
-    test_f_name = f'{test_f_id}.fits'
+def pytest_generate_tests(metafunc):
+    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/*.fits.header')
+    metafunc.parametrize('test_name', obs_id_list)
+
+
+def test_main_app(test_name, test_config, tmp_path, change_test_dir):
     test_config.change_working_directory(tmp_path.as_posix())
-    test_config.proxy_file_name = 'test_proxy.fqn'
-    test_config.task_types = [mc.TaskType.INGEST]
-    test_config.write_to_file(test_config)
-
-    with open(test_config.proxy_fqn, 'w') as f:
-        f.write('test content')
-    with open(test_config.work_fqn, 'w') as f:
-        f.write(test_f_name)
-
-    try:
-        # execution
-        test_result = composable._run()
-    except Exception as e:
-        assert False, e
-
-    assert test_result == 0, 'wrong return value'
-    assert do_one_mock.called, 'should have been called'
-    args, kwargs = do_one_mock.call_args
-    test_storage = args[0]
-    assert isinstance(test_storage, mc.StorageName), type(test_storage)
-    assert test_storage.file_name == test_f_name, 'wrong file name'
-    assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
+    storage_name = main_app.BlankName([test_name])
+    FileInfo(id=storage_name.file_uri, file_type='application/fits')
+    headers = ac.make_headers_from_file(test_name)
+    storage_name.file_info = {storage_name.file_uri: file_info}
+    storage_name.metadata = {storage_name.file_uri: headers}
+    test_reporter = ExecutionReporter2(test_config)
+    kwargs = {
+        'storage_name': storage_name,
+        'reporter': test_reporter,
+        'config': test_config,
+    }
+    expected_fqn = test_name.replace('.fits.header', '.expected.xml')
+    in_fqn = expected_fqn.replace('.expected', '.in')
+    actual_fqn = expected_fqn.replace('expected', 'actual')
+    if os.path.exists(actual_fqn):
+        os.unlink(actual_fqn)
+    observation = None
+    if os.path.exists(in_fqn):
+        observation = mc.read_obs_from_file(in_fqn)
+    observation = file2caom2_augmentation.visit(observation, **kwargs)
+    if observation is None:
+        assert False, f'Did not create observation for {test_name}'
+    else:
+        if os.path.exists(expected_fqn):
+            expected = mc.read_obs_from_file(expected_fqn)
+            compare_result = get_differences(expected, observation)
+            if compare_result is not None:
+                mc.write_obs_to_file(observation, actual_fqn)
+                compare_text = '\n'.join([r for r in compare_result])
+                msg = (
+                    f'Differences found in observation {expected.observation_id}\n'
+                    f'{compare_text}'
+                )
+                raise AssertionError(msg)
+        else:
+            mc.write_obs_to_file(observation, actual_fqn)
+            assert False, f'nothing to compare to for {test_name}, missing {expected_fqn}'
+    # assert False  # cause I want to see logging messages

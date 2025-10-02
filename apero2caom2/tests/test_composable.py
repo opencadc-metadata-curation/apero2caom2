@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                             (c) 2025.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -66,37 +66,38 @@
 # ***********************************************************************
 #
 
-from os.path import dirname, join, realpath
-from caom2pipe.manage_composable import Config, StorageName, TaskType
-import pytest
+from mock import patch
 
-COLLECTION = 'BLANK'
-SCHEME = 'cadc'
-PREVIEW_SCHEME = 'cadc'
+from caom2pipe import manage_composable as mc
+from apero2caom2 import composable
 
 
-@pytest.fixture()
-def test_config():
-    config = Config()
-    config.collection = COLLECTION
-    config.preview_scheme = PREVIEW_SCHEME
-    config.scheme = SCHEME
-    config.logging_level = 'INFO'
-    config.task_types = [TaskType.INGEST]
-    StorageName.collection = config.collection
-    StorageName.preview_scheme = config.preview_scheme
-    StorageName.scheme = config.scheme
-    StorageName.data_source_extensions = config.data_source_extensions
-    return config
+@patch('caom2pipe.client_composable.ClientCollection')
+@patch('caom2pipe.execute_composable.OrganizeExecutesRunnerMeta.do_one')
+def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
+    do_one_mock.return_value = (0, None)
+    test_f_id = 'test_file_id'
+    test_f_name = f'{test_f_id}.fits'
+    test_config.change_working_directory(tmp_path.as_posix())
+    test_config.proxy_file_name = 'test_proxy.fqn'
+    test_config.task_types = [mc.TaskType.INGEST]
+    test_config.write_to_file(test_config)
 
+    with open(test_config.proxy_fqn, 'w') as f:
+        f.write('test content')
+    with open(test_config.work_fqn, 'w') as f:
+        f.write(test_f_name)
 
-@pytest.fixture()
-def test_data_dir():
-    this_dir = dirname(realpath(__file__))
-    fqn = join(this_dir, 'data')
-    return fqn
+    try:
+        # execution
+        test_result = composable._run()
+    except Exception as e:
+        assert False, e
 
-             
-@pytest.fixture()
-def change_test_dir(tmp_path, monkeypatch): 
-    monkeypatch.chdir(tmp_path)
+    assert test_result == 0, 'wrong return value'
+    assert do_one_mock.called, 'should have been called'
+    args, kwargs = do_one_mock.call_args
+    test_storage = args[0]
+    assert isinstance(test_storage, mc.StorageName), type(test_storage)
+    assert test_storage.file_name == test_f_name, 'wrong file name'
+    assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
