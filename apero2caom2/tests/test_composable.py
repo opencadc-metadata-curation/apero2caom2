@@ -81,6 +81,7 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     test_config.change_working_directory(tmp_path.as_posix())
     test_config.proxy_file_name = 'test_proxy.fqn'
     test_config.task_types = [mc.TaskType.INGEST]
+    test_config.logging_level = 'DEBUG'
     test_config.write_to_file(test_config)
 
     with open(test_config.proxy_fqn, 'w') as f:
@@ -92,6 +93,9 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
         # execution
         test_result = composable._run()
     except Exception as e:
+        import traceback
+        import logging
+        logging.error(traceback.format_exc())
         assert False, e
 
     assert test_result == 0, 'wrong return value'

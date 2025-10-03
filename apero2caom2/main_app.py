@@ -67,14 +67,13 @@
 #
 
 """
-This module implements the ObsBlueprint mapping, as well as the workflow 
-entry point that executes the workflow.
+This module implements the ObsBlueprint mapping.
 """
 
 from os.path import basename
 
-from caom2pipe import caom_composable as cc
-from caom2pipe import manage_composable as mc
+from caom2pipe.caom_composable import TelescopeMapping2
+from cfht2caom2.cfht_name import CFHTName
 
 
 __all__ = [
@@ -83,22 +82,19 @@ __all__ = [
 ]
 
 
-class APEROName(mc.StorageName):
+class APEROName(CFHTName):
     """Naming rules:
     - support mixed-case file name storage, and mixed-case obs id values
-    - support uncompressed files in storage
+    - support CFHT compression rules for files in storage
     """
 
-    BLANK_NAME_PATTERN = '*'
-
-    def __init__(self, source_names):
-        super().__init__(source_names=source_names)
+    APERO_NAME_PATTERN = '*'
 
     def is_valid(self):
         return True
 
 
-class APEROMapping(cc.TelescopeMapping2):
+class APEROMapping(TelescopeMapping2):
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
@@ -125,3 +121,4 @@ class APEROMapping(cc.TelescopeMapping2):
 
     def _update_artifact(self, artifact):
         pass
+
