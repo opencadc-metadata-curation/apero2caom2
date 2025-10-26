@@ -79,9 +79,12 @@ class APEROFits2caom2Visitor(cc.Fits2caom2VisitorRunnerMeta):
         super().__init__(observation, **kwargs)
 
     def _get_mappings(self, dest_uri):
-        return [main_app.APEROMapping(
-            self._storage_name, self._clients, self._reporter, self._observation, self._config
-        )]
+        if '.fits' in dest_uri:
+            return [main_app.APEROMapping(
+                self._storage_name, self._clients, self._reporter, self._observation, self._config
+            )]
+        else:
+            return super()._get_mappings(dest_uri)
 
 
 def visit(observation, **kwargs):
