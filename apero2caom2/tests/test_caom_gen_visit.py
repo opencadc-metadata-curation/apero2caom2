@@ -66,53 +66,79 @@
 # ***********************************************************************
 #
 
-from mock import patch
+from mock import Mock, patch
 
-from apero2caom2 import file2caom2_augmentation, main_app
-from cadcdata import FileInfo
+from astropy.table import Table
+from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
 from caom2.diff import get_differences
-from caom2pipe import astro_composable as ac
-from caom2pipe import manage_composable as mc
+from caom2utils.data_util import get_local_file_info
+from caom2pipe.astro_composable import make_headers_from_file
+from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
+from apero2caom2.cfht_name import Inst
 
 import glob
 import os
 
 
 def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/*.fits.header')
+    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/**/*.expected.xml')
     metafunc.parametrize('test_name', obs_id_list)
 
 
-def test_main_app(test_name, test_config, tmp_path, change_test_dir):
+@patch('apero2caom2.provenance_augmentation.query_tap_client')
+def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir):
+    import logging
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    query_mock.side_effect = _query_tap
     test_config.change_working_directory(tmp_path.as_posix())
-    storage_name = main_app.BlankName([test_name])
-    FileInfo(id=storage_name.file_uri, file_type='application/fits')
-    headers = ac.make_headers_from_file(test_name)
-    storage_name.file_info = {storage_name.file_uri: file_info}
-    storage_name.metadata = {storage_name.file_uri: headers}
-    test_reporter = ExecutionReporter2(test_config)
-    kwargs = {
-        'storage_name': storage_name,
-        'reporter': test_reporter,
-        'config': test_config,
-    }
-    expected_fqn = test_name.replace('.fits.header', '.expected.xml')
-    in_fqn = expected_fqn.replace('.expected', '.in')
-    actual_fqn = expected_fqn.replace('expected', 'actual')
+
+    test_working_dir = os.path.dirname(test_name)
+    test_file_list = glob.glob(f'{test_working_dir}/*')
+
+    in_fqn = test_name.replace('.expected', '.in')
+    actual_fqn = test_name.replace('expected', 'actual')
     if os.path.exists(actual_fqn):
         os.unlink(actual_fqn)
     observation = None
     if os.path.exists(in_fqn):
-        observation = mc.read_obs_from_file(in_fqn)
-    observation = file2caom2_augmentation.visit(observation, **kwargs)
+        observation = read_obs_from_file(in_fqn)
+
+    for test_file_name in test_file_list:
+        if test_file_name.endswith('.fits') or '.xml' in test_file_name:
+            continue
+        logger.error(test_file_name)
+        test_instrument = test_config.lookup.get('instrument')
+        storage_name = main_app.APEROName(instrument=test_instrument, source_names=[test_file_name])
+        file_info = get_local_file_info(test_file_name)
+        if 'fits' in test_file_name:
+            file_info.contentType = 'application/fits'
+        if '.fits.header' in test_file_name:
+            headers = make_headers_from_file(test_file_name)
+        else:
+            headers = []
+        storage_name.file_info = {storage_name.file_uri: file_info}
+        storage_name.metadata = {storage_name.file_uri: headers}
+        test_reporter = ExecutionReporter2(test_config)
+        kwargs = {
+            'storage_name': storage_name,
+            'reporter': test_reporter,
+            'config': test_config,
+            'clients': Mock(),
+        }
+        observation = file2caom2_augmentation.visit(observation, **kwargs)
+        observation = provenance_augmentation.visit(observation, **kwargs)
+
     if observation is None:
         assert False, f'Did not create observation for {test_name}'
     else:
-        if os.path.exists(expected_fqn):
-            expected = mc.read_obs_from_file(expected_fqn)
+        if os.path.exists(test_name):
+            logger.error(test_name)
+            expected = read_obs_from_file(test_name)
             compare_result = get_differences(expected, observation)
             if compare_result is not None:
-                mc.write_obs_to_file(observation, actual_fqn)
+                write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
                 msg = (
                     f'Differences found in observation {expected.observation_id}\n'
@@ -120,6 +146,13 @@ def test_main_app(test_name, test_config, tmp_path, change_test_dir):
                 )
                 raise AssertionError(msg)
         else:
-            mc.write_obs_to_file(observation, actual_fqn)
-            assert False, f'nothing to compare to for {test_name}, missing {expected_fqn}'
+            write_obs_to_file(observation, actual_fqn)
+            assert False, f'nothing to compare to for {test_name}, missing {test_name}'
     # assert False  # cause I want to see logging messages
+
+
+def _query_tap(query_string, _):
+    return Table.read(
+        '\nobservationID\tproposal_project\tplaneID\tdataRelease\n2539897\t20BP40\t2539897o\t2020-02-25T20:36:31.230\n'.split('\n'),
+        format='ascii.tab',
+    )
