@@ -66,41 +66,10 @@
 # ***********************************************************************
 #
 
-import logging
-import traceback
-
-from datetime import datetime, timezone
-from os.path import basename, exists, join
-
-import matplotlib.image as image
-
-from cadcutils import exceptions
-from caom2 import Observation, ProductType, ReleaseType
-from caom2pipe.caom_composable import update_file_info
+from caom2 import ProductType, ReleaseType
 from caom2pipe.manage_composable import PreviewVisitor, search_for_file
-from gem2caom2.util import Inst
 
 __all__ = ['visit']
-
-
-# import matplotlib.image as image
-# import matplotlib.pyplot as plt
-
-# # p_f_name = './apero/ccf_plot_GL699_spirou_offline_udem.png'
-# # t_f_name = './apero/ccf_plot_GL699_spirou_offline_udem_256.png'
-
-# for p_f_name in glob('./apero/*udem.png'):
-#     t_f_name = p_f_name.replace('_udem.png', '_udem_256.png')
-#     print(p_f_name)
-#     print(t_f_name)
-#     preview = image.imread(p_f_name)
-#     image.thumbnail(p_f_name, t_f_name, scale=0.25)
-
-#     thumb = image.imread(t_f_name)
-#     # plt.imshow(preview)
-#     plt.imshow(thumb)
-#     plt.axis('off')
-#     plt.show()
 
 
 class APEROPreview(PreviewVisitor):
