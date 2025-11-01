@@ -53,6 +53,17 @@ progress_file_name: progress.txt
 collection: APERO
 scheme: cadc
 preview_scheme: cadc
+lookup:
+  instrument: SPIRou
+data_read_groups:
+  - ivo://cadc.nrc.ca/gms?CADC
+  - ivo://cadc.nrc.ca/gms?APERO-RW
+  - ivo://cadc.nrc.ca/gms?APERO-RO
+meta_read_groups:
+  - ivo://cadc.nrc.ca/gms?CADC
+  - ivo://cadc.nrc.ca/gms?APERO-RW
+  - ivo://cadc.nrc.ca/gms?APERO-RO
+
 #
 # CADC service execution metrics
 #

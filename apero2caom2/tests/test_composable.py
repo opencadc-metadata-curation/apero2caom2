@@ -66,8 +66,11 @@
 # ***********************************************************************
 #
 
-from mock import patch
+from mock import ANY, Mock, patch, PropertyMock
 
+from datetime import datetime
+
+from caom2 import SimpleObservation
 from caom2pipe import manage_composable as mc
 from apero2caom2 import composable
 
@@ -81,7 +84,6 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     test_config.change_working_directory(tmp_path.as_posix())
     test_config.proxy_file_name = 'test_proxy.fqn'
     test_config.task_types = [mc.TaskType.INGEST]
-    test_config.logging_level = 'DEBUG'
     test_config.write_to_file(test_config)
 
     with open(test_config.proxy_fqn, 'w') as f:
@@ -100,8 +102,88 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
 
     assert test_result == 0, 'wrong return value'
     assert do_one_mock.called, 'should have been called'
-    args, kwargs = do_one_mock.call_args
+    args, _ = do_one_mock.call_args
     test_storage = args[0]
     assert isinstance(test_storage, mc.StorageName), type(test_storage)
     assert test_storage.file_name == test_f_name, 'wrong file name'
     assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
+
+
+@patch('apero2caom2.provenance_augmentation.visit')
+@patch('apero2caom2.data_source.APEROLocalFilesDataSource._initialize_end_dt')
+@patch(
+    'apero2caom2.data_source.APEROLocalFilesDataSource.end_dt',
+    new_callable=PropertyMock(return_value=datetime(year=2025, month=11, day=1, hour=10, minute=5))
+)
+@patch('apero2caom2.file2caom2_augmentation.visit')
+@patch('caom2pipe.astro_composable.check_fitsverify')
+@patch('apero2caom2.composable.ClientCollection')
+def test_run_by_file_store_ingest_modify(
+    clients_mock,
+    fits_verify_mock,
+    visit_mock,
+    end_time_mock,
+    initialize_end_dt_mock,
+    provenance_mock,
+    test_data_dir,
+    test_config,
+    tmp_path,
+    change_test_dir,
+):
+    test_file_uri = 'cadc:APERO/SPIRou/Template_s1dw_GL699_sc1d_w_file_AB.fits'
+    visit_mock.side_effect = _mock_visit_wd
+    fits_verify_mock.return_value = True
+
+    test_config.change_working_directory(tmp_path.as_posix())
+    test_config.data_sources = [f'{test_data_dir}/Template_s1dw_GL699_sc1d_w_file_AB']
+    test_config.data_source_extensions = ['.fits.header']
+    test_config.task_types = [mc.TaskType.STORE, mc.TaskType.INGEST, mc.TaskType.MODIFY]
+    test_config.use_local_files = True
+    test_config.logging_level = 'INFO'
+    test_config.interval = 1800
+    test_config.write_to_file(test_config)
+    clients_mock.return_value.metadata_client.read.side_effect = _mock_repo_read
+    clients_mock.return_value.metadata_client.create.side_effect = Mock()
+    clients_mock.return_value.metadata_client.update.side_effect = _mock_repo_update
+    clients_mock.return_value.data_client.info.side_effect = _mock_get_file_info
+
+    test_state_fqn = f'{tmp_path}/state.yml'
+    start_time = datetime(year=2025, month=10, day=30, hour=10, minute=5)
+    mc.State.write_bookmark(test_state_fqn, test_config.bookmark, start_time)
+    mc.Config.write_to_file(test_config)
+
+    provenance_mock.side_effect = lambda x, working_directory, storage_name, log_file_directory, clients, reporter, config: x
+
+    test_result = composable._run_incremental()
+    assert test_result == 0, 'wrong result'
+    assert clients_mock.return_value.data_client.put.called, 'put call'
+    clients_mock.return_value.data_client.put.assert_called_with(
+        test_config.data_sources[0], test_file_uri
+    ), 'put call args'
+    assert clients_mock.return_value.metadata_client.read.called, 'read call'
+    clients_mock.return_value.metadata_client.read.assert_called_with('APERO', 'Template_GL699'), 'read call'
+    assert clients_mock.return_value.metadata_client.update.called, 'modify call'
+    clients_mock.return_value.metadata_client.update.assert_called_with(ANY), 'modify call'
+
+
+def _mock_repo_read(collection, obs_id):
+    return SimpleObservation(collection=collection, observation_id=obs_id)
+
+
+def _mock_visit_wd(obs, **kwargs):
+    return _mock_repo_read('NEOSSat', 'test_obs')
+
+
+def _mock_repo_update(ignore1):
+    return None
+
+
+def _mock_get_file_info(uri):
+    if '_prev' in uri:
+        return {'type': 'image/jpeg'}
+    else:
+        return {'type': 'application/fits'}
+
+
+def _mock_http_get(url, local_fqn, verify_session):
+    pass

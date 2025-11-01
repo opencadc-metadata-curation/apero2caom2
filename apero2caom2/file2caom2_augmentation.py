@@ -67,23 +67,28 @@
 #
 
 
-from caom2pipe import caom_composable as cc
+from caom2pipe.caom_composable import Fits2caom2VisitorRunnerMeta
 from apero2caom2 import main_app
 
 
 __all__ = ['APEROFits2caom2Visitor']
 
 
-class APEROFits2caom2Visitor(cc.Fits2caom2VisitorRunnerMeta):
-    def __init__(self, observation, **kwargs):
-        super().__init__(observation, **kwargs)
+class APEROFits2caom2Visitor(Fits2caom2VisitorRunnerMeta):
 
     def _get_mappings(self, dest_uri):
         if '.fits' in dest_uri:
+            self._logger.debug('APEROMapping')
             return [main_app.APEROMapping(
                 self._storage_name, self._clients, self._reporter, self._observation, self._config
             )]
+        elif '.png' in dest_uri or '.rdb':
+            self._logger.debug('APEROPostageStampMapping')
+            return [main_app.APEROPostageStampMapping(
+                self._storage_name, self._clients, self._reporter, self._observation, self._config
+            )]
         else:
+            self._logger.debug('TelescopeMapping2')
             return super()._get_mappings(dest_uri)
 
 

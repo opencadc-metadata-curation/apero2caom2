@@ -83,6 +83,7 @@ def test_config():
     config.scheme = SCHEME
     config.logging_level = 'INFO'
     config.task_types = [TaskType.INGEST]
+    config.lookup = {'instrument': 'SPIRou'}
     StorageName.collection = config.collection
     StorageName.preview_scheme = config.preview_scheme
     StorageName.scheme = config.scheme
@@ -96,7 +97,7 @@ def test_data_dir():
     fqn = join(this_dir, 'data')
     return fqn
 
-             
+
 @pytest.fixture()
-def change_test_dir(tmp_path, monkeypatch): 
+def change_test_dir(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
