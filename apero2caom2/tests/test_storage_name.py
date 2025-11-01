@@ -66,18 +66,18 @@
 # ***********************************************************************
 #
 
-from caom2pipe import manage_composable as mc
 from apero2caom2 import APEROName
 
 
-def test_is_valid():
-    assert APEROName('anything').is_valid()
+def test_is_valid(test_config):
+    assert APEROName(test_config.lookup.get('instrument'), ['anything']).is_valid()
 
 
 def test_storage_name(test_config):
-    test_obs_id = 'GL699'
+    # don't test obs_id, product_id, or destination uris, because those are set n the
+    # set_storage_name_from_local_preconditions method in main_app.py
     test_f_name = 'Template_s1dw_GL699_sc1d_w_file_AB.fits'
-    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
+    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_config.lookup.get('instrument')}/{test_f_name}'
     for index, entry in enumerate(
         [
             test_f_name,
@@ -87,11 +87,57 @@ def test_storage_name(test_config):
             f'/tmp/{test_f_name}',
         ]
     ):
-        test_subject = APEROName([entry])
+        test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
         assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
         assert test_subject.file_uri == test_uri, f'wrong uri {index}'
-        assert test_subject.obs_id == test_obs_id, f'wrong obs id {index}'
-        assert test_subject.product_id == test_obs_id, f'wrong product id {index}'
         assert test_subject.source_names == [entry], f'wrong source names {index}'
-        assert test_subject.destination_uris == [test_uri], f'wrong uris {index} {test_subject}'
+
+
+def test_product_id(test_config):
+    expected_obs_id = 'GL699'
+    test_f_name = 'Template_s1dw_GL699_sc1d_w_file_AB.fits'
+    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
+    for index, entry in enumerate(
+        [
+            "ccf_plot_GL699_spirou_offline_udem.png",
+            "ccf_plot_GL699_spirou_offline_udem_256.png",
+            "debug_effron_plot_GL699_spirou_offline_udem_256.png",
+            "debug_version_plot_GL699_spirou_offline_udem_256.png",
+            "debug_extsmax_plot_GL699_spirou_offline_udem.png",
+            "debug_extsmax_plot_GL699_spirou_offline_udem_256.png",
+            "debug_wcav000_plot_GL699_spirou_offline_udem.png",
+            "debug_wcav000_plot_GL699_spirou_offline_udem_256.png ",
+            "debug_shape_plot_GL699_spirou_offline_udem.png",
+            "debug_wfpdrift_plot_GL699_spirou_offline_udem.png",
+            "debug_shape_plot_GL699_spirou_offline_udem_256.png",
+            "debug_wfpdrift_plot_GL699_spirou_offline_udem_256.png",
+            "debug_effron_plot_GL699_spirou_offline_udem.png",
+            "debug_version_plot_GL699_spirou_offline_udem.png",
+            "lbl_GL699_GL699.rdb",
+            "lbl_GL699_GL699_drift.rdb",
+            "lbl_plot_GL699_GL699_spirou_offline_udem.png",
+            "lbl_plot_GL699_GL699_spirou_offline_udem_256.png",
+            "lbl2_GL699_GL699.rdb",
+            "lbl2_GL699_GL699_drift.rdb ",
+            "spec_plot_GL699_spirou_offline_udem_256.png",
+            "spec_plot_GL699_spirou_offline_udem.png",
+            "Template_s1dw_GL699_sc1d_w_file_AB.fits",
+            "Template_s1dw_GL699_sc1d_w_file_AB.fits.header",
+            "Template_GL699_tellu_obj_AB.fits",
+            "Template_GL699_tellu_obj_AB.fits.header ",
+            "Template_s1dv_GL699_sc1d_v_file_AB.fits ",
+            "Template_s1dv_GL699_sc1d_v_file_AB.fits.header",
+        ]
+    ):
+        test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
+        if entry.startswith('ccf'):
+            assert test_subject.product_id == f'ccf_{expected_obs_id}', f'ccf wrong {entry}'
+        elif entry.startswith('debug'):
+            assert test_subject.product_id == f'debug_{expected_obs_id}', f'debug wrong {entry}'
+        elif entry.startswith('lbl'):
+            assert test_subject.product_id == f'lbl_{expected_obs_id}', f'lbl wrong {entry}'
+        elif entry.startswith('spec'):
+            assert test_subject.product_id == f'spectrum_{expected_obs_id}', f'spectrum wrong {entry}'
+        elif '_tellu_' in entry:
+            assert test_subject.product_id == f'telluric_{expected_obs_id}', f'telluric wrong {entry}'
 

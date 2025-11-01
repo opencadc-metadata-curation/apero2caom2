@@ -66,84 +66,69 @@
 # ***********************************************************************
 #
 
-import glob
 import logging
-import os
+import traceback
 
-from mock import Mock, patch
+from datetime import datetime, timezone
+from os.path import basename, exists, join
 
-from astropy.table import Table
-from apero2caom2 import file2caom2_augmentation, main_app, preview_augmentation, provenance_augmentation
-from caom2.diff import get_differences
-from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
-from apero2caom2.main_app import set_storage_name_from_local_preconditions
+import matplotlib.image as image
+
+from cadcutils import exceptions
+from caom2 import Observation, ProductType, ReleaseType
+from caom2pipe.caom_composable import update_file_info
+from caom2pipe.manage_composable import PreviewVisitor, search_for_file
+from gem2caom2.util import Inst
+
+__all__ = ['visit']
 
 
-def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/**/*.expected.xml')
-    metafunc.parametrize('test_name', obs_id_list)
+# import matplotlib.image as image
+# import matplotlib.pyplot as plt
+
+# # p_f_name = './apero/ccf_plot_GL699_spirou_offline_udem.png'
+# # t_f_name = './apero/ccf_plot_GL699_spirou_offline_udem_256.png'
+
+# for p_f_name in glob('./apero/*udem.png'):
+#     t_f_name = p_f_name.replace('_udem.png', '_udem_256.png')
+#     print(p_f_name)
+#     print(t_f_name)
+#     preview = image.imread(p_f_name)
+#     image.thumbnail(p_f_name, t_f_name, scale=0.25)
+
+#     thumb = image.imread(t_f_name)
+#     # plt.imshow(preview)
+#     plt.imshow(thumb)
+#     plt.axis('off')
+#     plt.show()
 
 
-@patch('apero2caom2.provenance_augmentation.query_tap_client')
-def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir):
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+class APEROPreview(PreviewVisitor):
 
-    query_mock.side_effect = _query_tap
-    test_config.change_working_directory(tmp_path.as_posix())
 
-    test_working_dir = os.path.dirname(test_name)
-    test_file_list = glob.glob(f'{test_working_dir}/*')
+    def _do_prev(self, plane, observation_id):
+        """Previews are provided by the APERO team, so create thumbnails to work with Results tab displays."""
+        if self._storage_name.file_name.endswith('.png'):
 
-    in_fqn = test_name.replace('.expected', '.in')
-    actual_fqn = test_name.replace('expected', 'actual')
-    if os.path.exists(actual_fqn):
-        os.unlink(actual_fqn)
-    observation = None
-    if os.path.exists(in_fqn):
-        observation = read_obs_from_file(in_fqn)
-
-    for test_file_name in test_file_list:
-        if test_file_name.endswith('.fits') or '.xml' in test_file_name:
-            continue
-        storage_name = main_app.APEROName(
-            instrument=test_config.lookup.get('instrument'),
-            source_names=[test_file_name]
-        )
-        set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
-        test_reporter = ExecutionReporter2(test_config)
-        kwargs = {
-            'storage_name': storage_name,
-            'reporter': test_reporter,
-            'config': test_config,
-            'clients': Mock(),
-        }
-        observation = file2caom2_augmentation.visit(observation, **kwargs)
-        observation = provenance_augmentation.visit(observation, **kwargs)
-        observation = preview_augmentation.visit(observation, **kwargs)
-
-    if observation is None:
-        assert False, f'Did not create observation for {test_name}'
-    else:
-        if os.path.exists(test_name):
-            expected = read_obs_from_file(test_name)
-            compare_result = get_differences(expected, observation)
-            if compare_result is not None:
-                write_obs_to_file(observation, actual_fqn)
-                compare_text = '\n'.join([r for r in compare_result])
-                msg = (
-                    f'Differences found in observation {expected.observation_id}\n'
-                    f'{compare_text}'
+            if (
+                (plane.product_id.startswith('debug_') and self._storage_name.file_name.startswith('debug_shape_plot'))
+                or (plane.product_id.startswith('ccf') and self._storage_name.file_name.startswith('ccf'))
+                or (plane.product_id.startswith('lbl') and self._storage_name.file_name.startswith('lbl'))
+                or (plane.product_id.startswith('spectrum') and self._storage_name.file_name.startswith('spec'))
+            ):
+                self._preview_fqn = search_for_file(self._storage_name, self._config.working_directory)
+                self._gen_thumbnail()
+                self.add_preview(
+                    self._storage_name.thumb_uri,
+                    self._storage_name.thumb,
+                    ProductType.THUMBNAIL,
+                    ReleaseType.META,
                 )
-                raise AssertionError(msg)
-        else:
-            write_obs_to_file(observation, actual_fqn)
-            assert False, f'nothing to compare to for {test_name}, missing {test_name}'
-    # assert False  # cause I want to see logging messages
+                self.add_to_delete(self._thumb_fqn)
+        self._store_smalls()
+        return len(self._previews)
 
 
-def _query_tap(query_string, _):
-    return Table.read(
-        '\nobservationID\tproposal_project\tplaneID\tdataRelease\n2539897\t20BP40\t2539897o\t2020-02-25T20:36:31.230\n'.split('\n'),
-        format='ascii.tab',
-    )
+def visit(observation, **kwargs):
+    previewer = APEROPreview(**kwargs)
+    return previewer.visit(observation)

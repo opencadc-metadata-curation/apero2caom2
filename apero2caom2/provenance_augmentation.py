@@ -88,11 +88,14 @@ class APEROProvenanceVisitor:
         self.logger = logging.getLogger(__class__.__name__)
 
     def visit(self):
+        self.logger.error(f'Begin visit for {self.observation.observation_id}')
         counts = {}
         visit_plane = None
         for plane in self.observation.planes.values():
+            self.logger.error(f'plane {plane.product_id} file {self.storage_name.product_id}')
             if self.storage_name.product_id == plane.product_id:
                 for artifact_uri in plane.artifacts.keys():
+                    self.logger.error(f'artifact uri {artifact_uri} file uri {self.storage_name.file_uri}')
                     if artifact_uri == self.storage_name.file_uri:
                         visit_plane = plane
 
@@ -114,43 +117,47 @@ class APEROProvenanceVisitor:
 
                     for f_name_prefix in f_name_prefixes:
                         temp_storage_name = CFHTName(
-                            instrument=self.config.lookup.get('instrument'), source_names=[f_name_prefix]
+                            instrument=self.storage_name.instrument, source_names=[f_name_prefix]
                         )
-                        qs = f"""
-                        SELECT O.observationID, O.proposal_project, P.planeID, P.dataRelease,
-                        FROM caom2.Observation AS O
-                        JOIN caom2.Plane AS P on P.obsID = O.obsID
-                        WHERE O.observationID = '{temp_storage_name.obs_id}'
-                        """
-                        result = query_tap_client(qs, self.clients.query_client)
-                        if len(result) > 0:
-                            for entry in result:
-                                prov_obs_id = entry['observationID']
-                                prov_proposal_project = entry['proposal_project']
-                                prov_data_release = entry['dataRelease']
-                                prov_plane_id = entry['planeID']
+                        obs_member_uri, prov_plane_uri = make_plane_uri(
+                            temp_storage_name.obs_id, temp_storage_name.product_id, 'CFHT'
+                        )
+                        if obs_member_uri not in self.observation.members:
 
-                                obs_member_uri, prov_plane_uri = make_plane_uri(prov_obs_id, prov_plane_id, 'CFHT')
-                                if visit_plane.provenance and prov_plane_uri not in visit_plane.provenance.inputs:
-                                    visit_plane.provenance.inputs.add(prov_plane_uri)
-                                    self.logger.debug(f'Adding provenance input {prov_plane_uri}')
-                                if visit_plane.data_release:
-                                    visit_plane.data_release = max(
-                                        visit_plane.data_release, make_datetime(prov_data_release)
-                                    )
-                                else:
-                                    visit_plane.data_release = make_datetime(prov_data_release)
-                                self.logger.debug(f'Setting release date to {plane.data_release}')
-                                group_name = f'ivo://cadc.nrc.ca/gms?CFHT-{prov_proposal_project}'
-                                if group_name not in visit_plane.data_read_groups:
-                                    visit_plane.data_read_groups.add(group_name)
-                                    self.logger.debug(f'Adding read group {group_name}')
-                                if group_name not in visit_plane.meta_read_groups:
-                                    visit_plane.meta_read_groups.add(group_name)
-                                if group_name not in self.observation.meta_read_groups:
-                                    self.observation.meta_read_groups.add(group_name)
-                                counts['plane'] = 1
-                                if obs_member_uri not in self.observation.members:
+                            qs = f"""
+                            SELECT O.observationID, O.proposal_project, P.planeID, P.dataRelease,
+                            FROM caom2.Observation AS O
+                            JOIN caom2.Plane AS P on P.obsID = O.obsID
+                            WHERE O.observationID = '{temp_storage_name.obs_id}'
+                            """
+                            result = query_tap_client(qs, self.clients.query_client)
+                            if len(result) > 0:
+                                for entry in result:
+                                    prov_obs_id = entry['observationID']
+                                    prov_proposal_project = entry['proposal_project']
+                                    prov_data_release = entry['dataRelease']
+                                    prov_plane_id = entry['planeID']
+
+                                    obs_member_uri, prov_plane_uri = make_plane_uri(prov_obs_id, prov_plane_id, 'CFHT')
+                                    if visit_plane.provenance and prov_plane_uri not in visit_plane.provenance.inputs:
+                                        visit_plane.provenance.inputs.add(prov_plane_uri)
+                                        self.logger.debug(f'Adding provenance input {prov_plane_uri}')
+                                    if visit_plane.data_release:
+                                        visit_plane.data_release = max(
+                                            visit_plane.data_release, make_datetime(prov_data_release)
+                                        )
+                                    else:
+                                        visit_plane.data_release = make_datetime(prov_data_release)
+                                    self.logger.debug(f'Setting release date to {plane.data_release}')
+                                    group_name = f'ivo://cadc.nrc.ca/gms?CFHT-{prov_proposal_project}'
+                                    if group_name not in visit_plane.data_read_groups:
+                                        visit_plane.data_read_groups.add(group_name)
+                                        self.logger.debug(f'Adding read group {group_name}')
+                                    if group_name not in visit_plane.meta_read_groups:
+                                        visit_plane.meta_read_groups.add(group_name)
+                                    if group_name not in self.observation.meta_read_groups:
+                                        self.observation.meta_read_groups.add(group_name)
+                                    counts['plane'] = 1
                                     self.observation.members.add(obs_member_uri)
                                     self.logger.debug(f'Adding observation member {obs_member_uri}')
                                     counts['observation'] = 1
