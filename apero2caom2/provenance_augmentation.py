@@ -125,10 +125,10 @@ class APEROProvenanceVisitor:
                         if obs_member_uri not in self.observation.members:
 
                             qs = f"""
-                            SELECT O.observationID, O.proposal_project, P.planeID, P.dataRelease,
+                            SELECT O.observationID, O.proposal_project, P.productID, P.dataRelease
                             FROM caom2.Observation AS O
                             JOIN caom2.Plane AS P on P.obsID = O.obsID
-                            WHERE O.observationID = '{temp_storage_name.obs_id}'
+                            WHERE P.productID = '{temp_storage_name.product_id}'
                             """
                             result = query_tap_client(qs, self.clients.query_client)
                             if len(result) > 0:
@@ -136,18 +136,19 @@ class APEROProvenanceVisitor:
                                     prov_obs_id = entry['observationID']
                                     prov_proposal_project = entry['proposal_project']
                                     prov_data_release = entry['dataRelease']
-                                    prov_plane_id = entry['planeID']
+                                    prov_plane_id = entry['productID']
 
                                     obs_member_uri, prov_plane_uri = make_plane_uri(prov_obs_id, prov_plane_id, 'CFHT')
                                     if visit_plane.provenance and prov_plane_uri not in visit_plane.provenance.inputs:
                                         visit_plane.provenance.inputs.add(prov_plane_uri)
                                         self.logger.debug(f'Adding provenance input {prov_plane_uri}')
-                                    if visit_plane.data_release:
+                                    prov_data_release_dt = make_datetime(prov_data_release)
+                                    if visit_plane.data_release is not None and prov_data_release_dt is not None:
                                         visit_plane.data_release = max(
-                                            visit_plane.data_release, make_datetime(prov_data_release)
+                                            visit_plane.data_release, prov_data_release_dt
                                         )
                                     else:
-                                        visit_plane.data_release = make_datetime(prov_data_release)
+                                        visit_plane.data_release = prov_data_release_dt
                                     self.logger.debug(f'Setting release date to {plane.data_release}')
                                     group_name = f'ivo://cadc.nrc.ca/gms?CFHT-{prov_proposal_project}'
                                     if group_name not in visit_plane.data_read_groups:
