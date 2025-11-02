@@ -105,6 +105,7 @@ class APEROName(CFHTName):
 
     def __init__(self, instrument, source_names):
         self._file_uri = None
+        self._object = None
         super().__init__(instrument=instrument, source_names=source_names)
 
     def _get_uri(self, file_name, scheme):
@@ -123,31 +124,42 @@ class APEROName(CFHTName):
     def is_valid(self):
         return True
 
-    def set_product_id(self, **kwargs):
+    def set_obs_id(self, **kwargs):
         instrument_value = self._instrument.value.lower()
         bits = self.file_name.split('_')
         if self._file_id.startswith('debug_'):
-            temp_obs_id = bits[bits.index(instrument_value) - 1] if instrument_value in bits else 'target'
-            self._product_id = f'debug_{temp_obs_id}'
+            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else 'target'
         elif self._file_id.startswith('ccf_'):
-            temp_obs_id = bits[bits.index(instrument_value) - 1] if instrument_value in bits else 'target'
-            self._product_id = f'ccf_{temp_obs_id}'
+            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else 'target'
         elif 'tellu_' in self._file_id:
-            temp_obs_id = bits[bits.index('tellu') - 1] if 'tellu' in bits else 'target'
-            self._product_id = f'telluric_{temp_obs_id}'
+            self._object = bits[bits.index('tellu') - 1] if 'tellu' in bits else 'target'
         elif self._file_id.startswith('lbl'):
-            temp_obs_id = bits[bits.index(instrument_value) - 1] if instrument_value in bits else bits[1]
-            self._product_id = f'lbl_{temp_obs_id}'
+            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else bits[1]
         elif '_s1dw_' in self._file_id or '_s1dv_' in self._file_id:
-            temp_obs_id = bits[bits.index('s1dw') + 1] if 's1dw' in bits else 'target'
-            if temp_obs_id == 'target':
-                temp_obs_id = bits[bits.index('s1dv') + 1] if 's1dv' in bits else 'target'
-            self._product_id = f'spectrum_{temp_obs_id}'
+            self._object = bits[bits.index('s1dw') + 1] if 's1dw' in bits else 'target'
+            if self._object == 'target':
+                self._object = bits[bits.index('s1dv') + 1] if 's1dv' in bits else 'target'
         elif self._file_id.startswith('spec_'):
-            temp_obs_id = bits[bits.index(instrument_value) - 1] if instrument_value in bits else bits[1]
-            self._product_id = f'spectrum_{temp_obs_id}'
+            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else bits[1]
         else:
-            self._product_id = self._file_id
+            raise CadcException(f'Could not set observation ID for {self.file_name}')
+        self._obs_id = f'Template_{self._object}'
+
+    def set_product_id(self, **kwargs):
+        if self._file_id.startswith('debug_'):
+            self._product_id = f'debug_{self._object}'
+        elif self._file_id.startswith('ccf_'):
+            self._product_id = f'ccf_{self._object}'
+        elif 'tellu_' in self._file_id:
+            self._product_id = f'telluric_{self._object}'
+        elif self._file_id.startswith('lbl'):
+            self._product_id = f'lbl_{self._object}'
+        elif '_s1dw_' in self._file_id or '_s1dv_' in self._file_id:
+            self._product_id = f'spectrum_{self._object}'
+        elif self._file_id.startswith('spec_'):
+            self._product_id = f'spectrum_{self._object}'
+        else:
+            raise CadcException(f'Could not set observation ID for {self.file_name}')
 
     @staticmethod
     def remove_extensions(name):
@@ -222,15 +234,15 @@ class APEROPostageStampMapping(TelescopeMapping2):
         if spectrum_product_id in self._observation.planes.keys():
             spectrum_plane = self._observation.planes.get(spectrum_product_id)
             self._observation.meta_release = spectrum_plane.meta_release
-        for destination_product_id in [debug_product_id, lbl_product_id]:
-            if destination_product_id in self._observation.planes.keys():
-                destination_plane = self._observation.planes.get(destination_product_id)
+            for destination_product_id in [debug_product_id, lbl_product_id]:
+                if destination_product_id in self._observation.planes.keys():
+                    destination_plane = self._observation.planes.get(destination_product_id)
 
-                # copy over information that supports authorization
-                destination_plane.data_read_groups = spectrum_plane.data_read_groups
-                destination_plane.meta_read_groups = spectrum_plane.meta_read_groups
-                destination_plane.meta_release = spectrum_plane.meta_release
-                destination_plane.data_release = spectrum_plane.data_release
+                    # copy over information that supports authorization
+                    destination_plane.data_read_groups = spectrum_plane.data_read_groups
+                    destination_plane.meta_read_groups = spectrum_plane.meta_read_groups
+                    destination_plane.meta_release = spectrum_plane.meta_release
+                    destination_plane.data_release = spectrum_plane.data_release
         self._logger.debug('End _set_authorization_plane_metadata')
 
 

@@ -88,6 +88,20 @@ class APEROTodoFileDataSource(TodoFileDataSourceRunnerMeta):
 
 class APEROLocalFilesDataSource(LocalFilesDataSourceRunnerMeta):
 
+    def _verify_file(self, fqn):
+        """
+        Check file content for correctness, by whatever rules the file needs to conform to.
+        Over-ride the default implementation because APERO ingests png and rdb files as well as
+        fits.
+
+        :param fqn: str fully-qualified file name
+        :return: True if the file passes the check, False otherwise
+        """
+        if '.fits' in fqn:
+            return ac.check_fitsverify(fqn)
+        else:
+            return True
+
     def default_filter(self, dir_entry):
         """
         :param dir_entry: os.DirEntry
