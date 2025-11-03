@@ -198,7 +198,7 @@ class APEROPostageStampMapping(TelescopeMapping2):
         if len(headers) > 0:
             program_id = get_keyword(headers, 'RUNID')
             entries = APEROMapping.group_entries
-            if program_id:
+            if program_id and len(program_id) > 3:
                 current_entry = f'ivo://cadc.nrc.ca/gms?CFHT-{program_id}'
                 entries = APEROMapping.group_entries + [current_entry]
                 self._logger.debug(f'Found {current_entry} for meta and data read groups.')

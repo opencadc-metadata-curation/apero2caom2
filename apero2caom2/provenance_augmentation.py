@@ -88,6 +88,10 @@ class APEROProvenanceVisitor:
         self.logger = logging.getLogger(__class__.__name__)
 
     def visit(self):
+        if '.fits' not in self.storage_name.file_name:
+            self.logger.debug(f'No provenance metadata in {self.storage_name.file_name}. Returning.')
+            return self.observation
+
         self.logger.error(f'Begin visit for {self.observation.observation_id}')
         counts = {}
         visit_plane = None
@@ -98,6 +102,7 @@ class APEROProvenanceVisitor:
                     self.logger.error(f'artifact uri {artifact_uri} file uri {self.storage_name.file_uri}')
                     if artifact_uri == self.storage_name.file_uri:
                         visit_plane = plane
+                        break
 
         if visit_plane is None:
             raise CadcException(f'Could not find a plane for {self.storage_name}')
