@@ -73,6 +73,7 @@ This module implements the ObsBlueprint mapping.
 from os.path import basename
 
 from caom2 import Chunk, Part, ProductType
+from caom2pipe.astro_composable import get_geocentric_location
 from caom2pipe.caom_composable import TelescopeMapping2
 from caom2pipe.execute_composable import (
     CaomExecuteRunnerMeta,
@@ -167,9 +168,6 @@ class APEROName(CFHTName):
 
 
 class APEROPostageStampMapping(TelescopeMapping2):
-    group_entries = [
-        'ivo://cadc.nrc.ca/gms?APERO-RW', 'ivo://cadc.nrc.ca/gms?APERO-RO', 'ivo://cadc.nrc.ca/gms?CADC'
-    ]
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
@@ -178,6 +176,11 @@ class APEROPostageStampMapping(TelescopeMapping2):
 
         bp.set('DerivedObservation.members', {})
         bp.set('Observation.algorithm.name', 'LineByLine')
+        bp.set('Observation.telescope.name', 'CFHT 3.6m')
+        x, y, z = get_geocentric_location('cfht')
+        bp.set('Observation.telescope.geoLocationX', x)
+        bp.set('Observation.telescope.geoLocationY', y)
+        bp.set('Observation.telescope.geoLocationZ', z)
 
         # No proposal information for DerivedObservations
 
@@ -186,27 +189,18 @@ class APEROPostageStampMapping(TelescopeMapping2):
         if '.png' in self._storage_name.file_name:
             bp.set('Artifact.productType', 'preview')
         elif '.rdb' in self._storage_name.file_name:
-            bp.set('Plane.dataProductType', 'measurements')
+            bp.set('Plane.dataProductType', 'timeseries')
             bp.set('Artifact.productType', 'auxiliary')
         bp.set('Artifact.releaseType', 'data')
 
         self._logger.debug('Done accumulate_bp.')
 
-    def _set_read_groups(self):
-        self._logger.debug('Begin _set_read_groups')
-        headers = self._storage_name.metadata.get(self._storage_name.file_uri)
-        if len(headers) > 0:
-            program_id = get_keyword(headers, 'RUNID')
-            entries = APEROMapping.group_entries
-            if program_id and len(program_id) > 3:
-                current_entry = f'ivo://cadc.nrc.ca/gms?CFHT-{program_id}'
-                entries = APEROMapping.group_entries + [current_entry]
-                self._logger.debug(f'Found {current_entry} for meta and data read groups.')
-
-            for group_list in [self._data_read_groups, self._meta_read_groups]:
-                for entry in entries:
-                    group_list.add(entry)
-        self._logger.debug('End _set_read_groups')
+    def _init_read_groups(self, config):
+        super()._init_read_groups(config)
+        if self._observation:
+            for group in self._observation.meta_read_groups:
+                self._meta_read_groups.add(group)
+                self._data_read_groups.add(group)
 
     def _update_artifact(self, artifact):
         pass
@@ -215,27 +209,32 @@ class APEROPostageStampMapping(TelescopeMapping2):
         """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes
         and CAOM attributes).
         """
-        self._set_read_groups()
         self._observation = super().update()
         self._set_authorization_plane_metadata()
         return self._observation
 
     def _set_authorization_plane_metadata(self):
-        # The Plane-level metadata for the debug and lbl planes has to come from a different plane, as there's no
-        # metadata to scrape from the png or rdb files. Pick the spectrum plane for the data source.
+        # The Plane-level metadata for the ccf, debug and lbl planes has to come from a different plane, as there's no
+        # metadata to scrape from the png or rdb files. Pick the any plane with fits files for the data source.
         plane_bits = self._storage_name.product_id.split('_')
+        ccf_product_id = f'ccf_{plane_bits[1]}'
         debug_product_id = f'debug_{plane_bits[1]}'
         lbl_product_id = f'lbl_{plane_bits[1]}'
         spectrum_product_id = f'spectrum_{plane_bits[1]}'
+        telluric_product_id = f'telluric_{plane_bits[1]}'
         self._logger.debug(
-            f'Begin _set_authorization_plane_metadata with keys {debug_product_id}, {lbl_product_id} and '
-            f'{spectrum_product_id}'
+            f'Begin _set_authorization_plane_metadata with keys {ccf_product_id}, {debug_product_id}, '
+            f'{lbl_product_id}, {spectrum_product_id} and {telluric_product_id}'
         )
-        if spectrum_product_id in self._observation.planes.keys():
+        if (
+            spectrum_product_id in self._observation.planes.keys()
+            or telluric_product_id in self._observation.planes.keys()
+        ):
             spectrum_plane = self._observation.planes.get(spectrum_product_id)
             self._observation.meta_release = spectrum_plane.meta_release
-            for destination_product_id in [debug_product_id, lbl_product_id]:
+            for destination_product_id in [ccf_product_id, debug_product_id, lbl_product_id]:
                 if destination_product_id in self._observation.planes.keys():
+                    self._logger.debug(f'Copying plane authorization metadata for {destination_product_id}')
                     destination_plane = self._observation.planes.get(destination_product_id)
 
                     # copy over information that supports authorization
@@ -326,8 +325,6 @@ class APEROMapping(APEROPostageStampMapping):
         if temp is not None:
             result = temp / (24.0 * 3600.0)
         return result
-
-    # def _get_time_function_val(self, ext):
 
     def _get_ra_deg_from_0th_header(self, ext):
         return self._storage_name.metadata.get(self._storage_name.file_uri)[0].get('PP_RA')

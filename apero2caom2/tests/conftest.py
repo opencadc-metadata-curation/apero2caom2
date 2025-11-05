@@ -88,6 +88,12 @@ def test_config():
     StorageName.preview_scheme = config.preview_scheme
     StorageName.scheme = config.scheme
     StorageName.data_source_extensions = config.data_source_extensions
+    config.meta_read_groups = [
+        'ivo://cadc.nrc.ca/gms?CADC',
+        'ivo://cadc.nrc.ca/gms?APERO-RW',
+        'ivo://cadc.nrc.ca/gms?APERO-RO',
+    ]
+    config.data_read_groups = config.meta_read_groups
     return config
 
 

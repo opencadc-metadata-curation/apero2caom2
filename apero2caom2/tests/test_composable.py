@@ -79,7 +79,7 @@ from apero2caom2 import composable
 @patch('caom2pipe.execute_composable.OrganizeExecutesRunnerMeta.do_one')
 def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     do_one_mock.return_value = (0, None)
-    test_f_id = 'test_file_id'
+    test_f_id = 'Template_s1dw_GL699_sc1d_w_file_AB'
     test_f_name = f'{test_f_id}.fits'
     test_config.change_working_directory(tmp_path.as_posix())
     test_config.proxy_file_name = 'test_proxy.fqn'
@@ -116,7 +116,7 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     new_callable=PropertyMock(return_value=datetime(year=2025, month=11, day=1, hour=10, minute=5))
 )
 @patch('apero2caom2.file2caom2_augmentation.visit')
-@patch('caom2pipe.astro_composable.check_fitsverify')
+@patch('apero2caom2.data_source.check_fitsverify')
 @patch('apero2caom2.composable.ClientCollection')
 def test_run_by_file_store_ingest_modify(
     clients_mock,
@@ -152,7 +152,9 @@ def test_run_by_file_store_ingest_modify(
     mc.State.write_bookmark(test_state_fqn, test_config.bookmark, start_time)
     mc.Config.write_to_file(test_config)
 
-    provenance_mock.side_effect = lambda x, working_directory, storage_name, log_file_directory, clients, reporter, config: x
+    provenance_mock.side_effect = (
+        lambda x, working_directory, storage_name, log_file_directory, clients, reporter, config: x
+    )
 
     test_result = composable._run_incremental()
     assert test_result == 0, 'wrong result'

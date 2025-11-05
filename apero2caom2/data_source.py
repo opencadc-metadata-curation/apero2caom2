@@ -68,6 +68,7 @@
 
 from datetime import datetime, timezone
 from caom2utils.data_util import get_local_file_info
+from caom2pipe.astro_composable import check_fitsverify
 from caom2pipe.data_source_composable import DataSource, LocalFilesDataSourceRunnerMeta, TodoFileDataSourceRunnerMeta
 from apero2caom2.main_app import APEROName
 
@@ -98,7 +99,7 @@ class APEROLocalFilesDataSource(LocalFilesDataSourceRunnerMeta):
         :return: True if the file passes the check, False otherwise
         """
         if '.fits' in fqn:
-            return ac.check_fitsverify(fqn)
+            return check_fitsverify(fqn)
         else:
             return True
 

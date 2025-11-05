@@ -70,7 +70,7 @@ from apero2caom2 import APEROName
 
 
 def test_is_valid(test_config):
-    assert APEROName(test_config.lookup.get('instrument'), ['anything']).is_valid()
+    assert APEROName(test_config.lookup.get('instrument'), ['ccf_plot_GL699_spirou_offline_udem.png']).is_valid()
 
 
 def test_storage_name(test_config):

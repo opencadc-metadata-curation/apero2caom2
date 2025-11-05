@@ -76,7 +76,7 @@ class APEROPreview(PreviewVisitor):
 
 
     def _do_prev(self, plane, observation_id):
-        """Previews are provided by the APERO team, so create thumbnails to work with Results tab displays."""
+        """Previews are provided by the APERO team, so only create thumbnails to work with Results tab displays."""
         if self._storage_name.file_name.endswith('.png'):
             if (
                 (plane.product_id.startswith('debug_') and self._storage_name.file_name.startswith('debug_shape_plot'))
