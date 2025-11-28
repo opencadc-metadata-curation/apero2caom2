@@ -144,6 +144,6 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
 
 def _query_tap(query_string, _):
     return Table.read(
-        '\nproposal_id\tdataRelease\n20BP40\t2020-02-25T20:36:31.230\n'.split('\n'),
+        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split('\n'),
         format='ascii.tab',
     )

@@ -90,7 +90,7 @@ class APEROPreview(PreviewVisitor):
                     self._storage_name.thumb_uri,
                     self._storage_name.thumb,
                     ProductType.THUMBNAIL,
-                    ReleaseType.META,
+                    ReleaseType.DATA,
                 )
                 self.add_to_delete(self._thumb_fqn)
         self._store_smalls()

@@ -129,7 +129,7 @@ class APEROProvenanceVisitor:
                         # if obs_member_uri not in self.observation.members:
                         if visit_plane.provenance and prov_plane_uri not in visit_plane.provenance.inputs:
                             qs = f"""
-                            SELECT O.proposal_id, P.dataRelease
+                            SELECT O.proposal_id, P.dataRelease, P.metaRelease
                             FROM caom2.Observation AS O
                             JOIN caom2.Plane AS P on P.obsID = O.obsID
                             WHERE P.productID = '{temp_storage_name.product_id}'
@@ -141,6 +141,7 @@ class APEROProvenanceVisitor:
                                 for entry in result:
                                     prov_proposal_id = entry['proposal_id']
                                     prov_data_release = entry['dataRelease']
+                                    prov_meta_release = entry['metaRelease']
 
                                     if visit_plane.provenance and prov_plane_uri not in visit_plane.provenance.inputs:
                                         visit_plane.provenance.inputs.add(prov_plane_uri)
@@ -152,7 +153,15 @@ class APEROProvenanceVisitor:
                                         )
                                     else:
                                         visit_plane.data_release = prov_data_release_dt
-                                    self.logger.debug(f'Setting release date to {visit_plane.data_release}')
+                                    self.logger.debug(f'Setting data release date to {visit_plane.data_release}')
+                                    prov_meta_release_dt = make_datetime(prov_meta_release)
+                                    if visit_plane.meta_release is not None and prov_meta_release_dt is not None:
+                                        visit_plane.meta_release = max(
+                                            visit_plane.meta_release, prov_meta_release_dt
+                                        )
+                                    else:
+                                        visit_plane.meta_release = prov_meta_release_dt
+                                    self.logger.debug(f'Setting meta release date to {visit_plane.meta_release}')
                                     group_name = f'ivo://cadc.nrc.ca/gms?CFHT-{prov_proposal_id}'
                                     add_these_groups.append(group_name)
                                     counts['plane'] = 1
