@@ -66,77 +66,61 @@
 # ***********************************************************************
 #
 
-from apero2caom2 import APEROName
+import logging
+import os
+
+from mock import Mock
+
+from apero2caom2 import file2caom2_augmentation, main_app, preview_augmentation, provenance_augmentation
+from caom2.diff import get_differences
+from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
+from apero2caom2.main_app import set_storage_name_from_local_preconditions
 
 
-def test_is_valid(test_config):
-    assert APEROName(test_config.lookup.get('instrument'), ['ccf_plot_GL699_spirou_offline_udem.png']).is_valid()
+def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
 
+    test_config.change_working_directory(tmp_path.as_posix())
+    test_config.lookup['instrument'] = 'SOMETHING_ELSE'
 
-def test_storage_name(test_config):
-    # don't test obs_id, product_id, or destination uris, because those are set n the
-    # set_storage_name_from_local_preconditions method in main_app.py
-    test_f_name = 'Template_s1dw_GL699_sc1d_w_file_AB.fits'
-    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_config.lookup.get('instrument')}/{test_f_name}'
-    for index, entry in enumerate(
-        [
-            test_f_name,
-            test_uri,
-            f'https://localhost:8020/{test_f_name}',
-            f'vos:goliaths/test/{test_f_name}',
-            f'/tmp/{test_f_name}',
-        ]
-    ):
-        test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
-        assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
-        assert test_subject.file_uri == test_uri, f'wrong uri {index}'
-        assert test_subject.source_names == [entry], f'wrong source names {index}'
+    expected_fqn = f'{test_data_dir}/something_else.expected.xml'
+    actual_fqn = expected_fqn.replace('expected', 'actual')
+    if os.path.exists(actual_fqn):
+        os.unlink(actual_fqn)
+    observation = None
+    test_file_name = f'{test_data_dir}/Template_GL699/Template_GL699_tellu_obj_AB.fits.header'
+    storage_name = main_app.APEROName(
+        instrument='SOMETHING_ELSE',
+        source_names=[test_file_name]
+    )
+    set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
+    test_reporter = ExecutionReporter2(test_config)
+    kwargs = {
+        'storage_name': storage_name,
+        'reporter': test_reporter,
+        'config': test_config,
+        'clients': Mock(),
+    }
+    observation = file2caom2_augmentation.visit(observation, **kwargs)
+    observation = provenance_augmentation.visit(observation, **kwargs)
+    observation = preview_augmentation.visit(observation, **kwargs)
 
-
-def test_product_id(test_config):
-    expected_obs_id = 'GL699'
-    test_f_name = 'Template_s1dw_GL699_sc1d_w_file_AB.fits'
-    for index, entry in enumerate(
-        [
-            "ccf_plot_GL699_spirou_offline_udem.png",
-            "ccf_plot_GL699_spirou_offline_udem_256.png",
-            "debug_effron_plot_GL699_spirou_offline_udem_256.png",
-            "debug_version_plot_GL699_spirou_offline_udem_256.png",
-            "debug_extsmax_plot_GL699_spirou_offline_udem.png",
-            "debug_extsmax_plot_GL699_spirou_offline_udem_256.png",
-            "debug_wcav000_plot_GL699_spirou_offline_udem.png",
-            "debug_wcav000_plot_GL699_spirou_offline_udem_256.png ",
-            "debug_shape_plot_GL699_spirou_offline_udem.png",
-            "debug_wfpdrift_plot_GL699_spirou_offline_udem.png",
-            "debug_shape_plot_GL699_spirou_offline_udem_256.png",
-            "debug_wfpdrift_plot_GL699_spirou_offline_udem_256.png",
-            "debug_effron_plot_GL699_spirou_offline_udem.png",
-            "debug_version_plot_GL699_spirou_offline_udem.png",
-            "lbl_GL699_GL699.rdb",
-            "lbl_GL699_GL699_drift.rdb",
-            "lbl_plot_GL699_GL699_spirou_offline_udem.png",
-            "lbl_plot_GL699_GL699_spirou_offline_udem_256.png",
-            "lbl2_GL699_GL699.rdb",
-            "lbl2_GL699_GL699_drift.rdb ",
-            "spec_plot_GL699_spirou_offline_udem_256.png",
-            "spec_plot_GL699_spirou_offline_udem.png",
-            "Template_s1dw_GL699_sc1d_w_file_AB.fits",
-            "Template_s1dw_GL699_sc1d_w_file_AB.fits.header",
-            "Template_GL699_tellu_obj_AB.fits",
-            "Template_GL699_tellu_obj_AB.fits.header ",
-            "Template_s1dv_GL699_sc1d_v_file_AB.fits ",
-            "Template_s1dv_GL699_sc1d_v_file_AB.fits.header",
-        ]
-    ):
-        test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
-        if entry.startswith('ccf'):
-            assert test_subject.product_id == f'ccf_{expected_obs_id}', f'ccf wrong {entry}'
-        elif entry.startswith('debug'):
-            assert test_subject.product_id == f'debug_{expected_obs_id}', f'debug wrong {entry}'
-        elif entry.startswith('lbl'):
-            assert test_subject.product_id == f'lbl_{expected_obs_id}', f'lbl wrong {entry}'
-        elif entry.startswith('spec'):
-            assert test_subject.product_id == f'spectrum_{expected_obs_id}', f'spectrum wrong {entry}'
-        elif '_tellu_' in entry:
-            assert test_subject.product_id == f'telluric_{expected_obs_id}', f'telluric wrong {entry}'
-
+    if observation is None:
+        assert False, f'Did not create observation for SOMETHING_ELSE'
+    else:
+        if os.path.exists(expected_fqn):
+            expected = read_obs_from_file(expected_fqn)
+            compare_result = get_differences(expected, observation)
+            if compare_result is not None:
+                write_obs_to_file(observation, actual_fqn)
+                compare_text = '\n'.join([r for r in compare_result])
+                msg = (
+                    f'Differences found in observation {expected.observation_id}\n'
+                    f'{compare_text}'
+                )
+                raise AssertionError(msg)
+        else:
+            write_obs_to_file(observation, actual_fqn)
+            assert False, f'nothing to compare to for SOMETHING_ELSE'
+        # assert False  # cause I want to see logging messages

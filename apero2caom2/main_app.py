@@ -70,6 +70,7 @@
 This module implements the ObsBlueprint mapping.
 """
 
+from datetime import datetime, timedelta
 from os.path import basename
 
 from caom2 import Chunk, Part, ProductType
@@ -107,10 +108,20 @@ class APEROName(CFHTName):
     def __init__(self, instrument, source_names):
         self._file_uri = None
         self._object = None
-        super().__init__(instrument=instrument, source_names=source_names)
+        self._instrument_value = instrument
+        try:
+            super().__init__(instrument=instrument, source_names=source_names)
+        except ValueError as e:
+            self._bitpix = None
+            self._instrument = instrument
+            StorageName.__init__(self, source_names=source_names)
 
     def _get_uri(self, file_name, scheme):
-        return f'{scheme}:{self.collection}/{self.instrument.value}/{basename(file_name).replace('.header', '')}'
+        return f'{scheme}:{self.collection}/{self._instrument_value}/{basename(file_name).replace('.header', '')}'
+
+    @property
+    def instrument_value(self):
+        return self._instrument_value
 
     @property
     def prev(self):
@@ -126,22 +137,22 @@ class APEROName(CFHTName):
         return True
 
     def set_obs_id(self, **kwargs):
-        instrument_value = self._instrument.value.lower()
+        iv_lower = self._instrument_value.lower()
         bits = self.file_name.split('_')
         if self._file_id.startswith('debug_'):
-            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else 'target'
+            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else 'target'
         elif self._file_id.startswith('ccf_'):
-            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else 'target'
+            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else 'target'
         elif 'tellu_' in self._file_id:
             self._object = bits[bits.index('tellu') - 1] if 'tellu' in bits else 'target'
         elif self._file_id.startswith('lbl'):
-            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else bits[1]
+            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else bits[1]
         elif '_s1dw_' in self._file_id or '_s1dv_' in self._file_id:
             self._object = bits[bits.index('s1dw') + 1] if 's1dw' in bits else 'target'
             if self._object == 'target':
                 self._object = bits[bits.index('s1dv') + 1] if 's1dv' in bits else 'target'
         elif self._file_id.startswith('spec_'):
-            self._object = bits[bits.index(instrument_value) - 1] if instrument_value in bits else bits[1]
+            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else bits[1]
         else:
             raise CadcException(f'Could not set observation ID for {self.file_name}')
         self._obs_id = f'Template_{self._object}'
@@ -176,11 +187,12 @@ class APEROPostageStampMapping(TelescopeMapping2):
 
         bp.set('DerivedObservation.members', {})
         bp.set('Observation.algorithm.name', 'LineByLine')
-        bp.set('Observation.telescope.name', 'CFHT 3.6m')
-        x, y, z = get_geocentric_location('cfht')
-        bp.set('Observation.telescope.geoLocationX', x)
-        bp.set('Observation.telescope.geoLocationY', y)
-        bp.set('Observation.telescope.geoLocationZ', z)
+        if self._storage_name.instrument_value.lower() == 'spirou':
+            bp.set('Observation.telescope.name', 'CFHT 3.6m')
+            x, y, z = get_geocentric_location('cfht')
+            bp.set('Observation.telescope.geoLocationX', x)
+            bp.set('Observation.telescope.geoLocationY', y)
+            bp.set('Observation.telescope.geoLocationZ', z)
 
         # No proposal information for DerivedObservations
 
@@ -230,18 +242,23 @@ class APEROPostageStampMapping(TelescopeMapping2):
             spectrum_product_id in self._observation.planes.keys()
             or telluric_product_id in self._observation.planes.keys()
         ):
-            spectrum_plane = self._observation.planes.get(spectrum_product_id)
-            self._observation.meta_release = spectrum_plane.meta_release
+            source_plane = self._observation.planes.get(spectrum_product_id)
+            if source_plane is None:
+                source_plane = self._observation.planes.get(telluric_product_id)
+            if source_plane.meta_release:
+                self._observation.meta_release = source_plane.meta_release
             for destination_product_id in [ccf_product_id, debug_product_id, lbl_product_id]:
                 if destination_product_id in self._observation.planes.keys():
                     self._logger.debug(f'Copying plane authorization metadata for {destination_product_id}')
                     destination_plane = self._observation.planes.get(destination_product_id)
 
                     # copy over information that supports authorization
-                    destination_plane.data_read_groups = spectrum_plane.data_read_groups
-                    destination_plane.meta_read_groups = spectrum_plane.meta_read_groups
-                    destination_plane.meta_release = spectrum_plane.meta_release
-                    destination_plane.data_release = spectrum_plane.data_release
+                    destination_plane.data_read_groups = source_plane.data_read_groups
+                    destination_plane.meta_read_groups = source_plane.meta_read_groups
+                    if source_plane.meta_release:
+                        destination_plane.meta_release = source_plane.meta_release
+                    if source_plane.data_release:
+                        destination_plane.data_release = source_plane.data_release
         self._logger.debug('End _set_authorization_plane_metadata')
 
 
@@ -266,7 +283,10 @@ class APEROMapping(APEROPostageStampMapping):
         bp.set('Plane.dataProductType', 'spectrum')
         # bp.add_attribute('Plane.dataRelease', 'DRSVDATE')
         bp.add_attribute('Plane.metrics.magLimit', 'OBJMAG')
-        bp.set('Plane.dataRelease', '2027-01-01T00:00:00')
+        # approximately two years in the future, to cover the cases where provenance metadata is not scrapable
+        default_release_date = (datetime.now() + timedelta(weeks=104)).isoformat()
+        bp.set_default('Plane.dataRelease', default_release_date)
+        bp.set_default('Plane.metaRelease', default_release_date)
         bp.set('Plane.provenance.name', 'APERO')
         bp.add_attribute('Plane.provenance.lastExecuted', 'DRSPDATE')
         bp.set('Plane.provenance.reference', 'https://apero.exoplanets.ca/')
@@ -553,7 +573,7 @@ def set_storage_name_from_local_preconditions(storage_name, working_directory, l
                 headers[source_name] = []
 
             uri = (
-                f'{storage_name.scheme}:{storage_name.collection}/{storage_name.instrument.value}/'
+                f'{storage_name.scheme}:{storage_name.collection}/{storage_name.instrument_value}/'
                 f'{basename(source_name).replace('.header', '')}'
             )
             storage_name._file_uri = uri

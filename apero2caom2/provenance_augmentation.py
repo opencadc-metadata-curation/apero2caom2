@@ -80,6 +80,8 @@ __all__ = ['APEROFits2caom2Visitor']
 
 
 class APEROProvenanceVisitor:
+    """Extract provenance information for observations taken with SPIRou. The implementation assumes that CFHT is
+    the originating telescope."""
     def __init__(self, observation, **kwargs):
         self.observation = observation
         self.clients = kwargs.get('clients')
@@ -90,6 +92,10 @@ class APEROProvenanceVisitor:
     def visit(self):
         if '.fits' not in self.storage_name.file_name:
             self.logger.debug(f'No provenance metadata in {self.storage_name.file_name}. Returning.')
+            return self.observation
+
+        if self.storage_name.instrument_value.lower() != 'spirou':
+            self.logger.info(f'No provenance metadata for {self.storage_name.instrument_value}. Returning.')
             return self.observation
 
         self.logger.debug(f'Begin visit for {self.observation.observation_id}')
