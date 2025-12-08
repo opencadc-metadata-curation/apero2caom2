@@ -66,43 +66,20 @@
 # ***********************************************************************
 #
 
-from caom2 import ProductType, ReleaseType
-from caom2pipe.manage_composable import PreviewVisitor, search_for_file
-
-__all__ = ['visit']
+import logging
+from caom2utils.caom2blueprint import update_artifact_meta
 
 
-class APEROPreview(PreviewVisitor):
-
-    def visit(self, observation):
-        if self._storage_name.instrument_value.lower() != 'spirou':
-            self._logger.info(f'No provenance metadata for instrument {self._storage_name.instrument_value}. Returning.')
-            return observation
-        else:
-            return super().visit(observation)
-
-    def _do_prev(self, plane, observation_id):
-        """Previews are provided by the APERO team, so only create thumbnails to work with Results tab displays."""
-        if self._storage_name.file_name.endswith('.png'):
-            if (
-                (plane.product_id.startswith('debug_') and self._storage_name.file_name.startswith('debug_shape_plot'))
-                or (plane.product_id.startswith('ccf') and self._storage_name.file_name.startswith('ccf'))
-                or (plane.product_id.startswith('lbl') and self._storage_name.file_name.startswith('lbl'))
-                or (plane.product_id.startswith('spectrum') and self._storage_name.file_name.startswith('spec'))
-            ):
-                self._preview_fqn = search_for_file(self._storage_name, self._config.working_directory)
-                self._gen_thumbnail()
-                self.add_preview(
-                    self._storage_name.thumb_uri,
-                    self._storage_name.thumb,
-                    ProductType.THUMBNAIL,
-                    ReleaseType.DATA,
-                )
-                self.add_to_delete(self._thumb_fqn)
-        self._store_smalls()
-        return len(self._previews)
-
-
-def visit(observation, **kwargs):
-    previewer = APEROPreview(**kwargs)
-    return previewer.visit(observation)
+def update(observation, **kwargs):
+    """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes
+    and CAOM attributes).
+    """
+    logging.debug(f'Begin update for {observation.observation_id}')
+    uri = kwargs.get('uri')
+    file_info = kwargs.get('file_info')
+    for plane in observation.planes.values():
+        for artifact in plane.artifacts.values():
+            if uri == artifact.uri:
+                update_artifact_meta(artifact, file_info)
+    logging.debug('End update')
+    return observation

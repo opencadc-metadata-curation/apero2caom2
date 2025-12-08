@@ -14,20 +14,13 @@
   <caom2:type>OBJECT</caom2:type>
   <caom2:intent>science</caom2:intent>
   <caom2:target>
-    <caom2:name>GL699</caom2:name>
+    <caom2:name>Gl699</caom2:name>
   </caom2:target>
-  <caom2:targetPosition>
-    <caom2:coordsys>FK5</caom2:coordsys>
-    <caom2:coordinates>
-      <caom2:cval1>269.4485025</caom2:cval1>
-      <caom2:cval2>4.739420051</caom2:cval2>
-    </caom2:coordinates>
-  </caom2:targetPosition>
   <caom2:telescope>
     <caom2:name>CFHT 3.6m</caom2:name>
   </caom2:telescope>
   <caom2:instrument>
-    <caom2:name>SPIRou</caom2:name>
+    <caom2:name>DIFFERENT</caom2:name>
   </caom2:instrument>
   <caom2:planes>
     <caom2:plane caom2:id="152d5b96-984d-4b4e-b4a7-f51831bd071f" caom2:metaProducer="apero2caom2/0.1.0">
@@ -44,38 +37,28 @@
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?APERO-RO</caom2:groupURI>
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?APERO-RW</caom2:groupURI>
       </caom2:dataReadGroups>
-      <caom2:dataProductType>spectrum</caom2:dataProductType>
+      <caom2:dataProductType>timeseries</caom2:dataProductType>
       <caom2:calibrationLevel>2</caom2:calibrationLevel>
-      <caom2:provenance>
-        <caom2:name>APERO</caom2:name>
-        <caom2:version>0.7.295</caom2:version>
-        <caom2:producer>CFHT</caom2:producer>
-        <caom2:runID>PID-00017628631505612230-3FBE</caom2:runID>
-        <caom2:reference>https://apero.exoplanets.ca/</caom2:reference>
-        <caom2:lastExecuted>2025-11-11T12:12:30.561</caom2:lastExecuted>
-      </caom2:provenance>
-      <caom2:metrics>
-        <caom2:magLimit>4.83</caom2:magLimit>
-      </caom2:metrics>
       <caom2:artifacts>
         <caom2:artifact caom2:id="4b055b0f-ca1b-4193-8d6c-9200f7905872" caom2:metaProducer="apero2caom2/0.1.0">
-          <caom2:uri>cadc:APERO/SOMETHING_ELSE/Template_GL699_tellu_obj_AB.fits</caom2:uri>
+          <caom2:uri>cadc:APERO/DIFFERENT/Template_GL699_tellu_obj_AB.fits</caom2:uri>
           <caom2:productType>science</caom2:productType>
           <caom2:releaseType>data</caom2:releaseType>
           <caom2:contentType>text/plain</caom2:contentType>
           <caom2:contentLength>85585</caom2:contentLength>
           <caom2:contentChecksum>md5:241d824afc1694bc4c751e2bbb4abc13</caom2:contentChecksum>
           <caom2:parts>
-            <caom2:part caom2:id="6f974536-93d9-455e-a482-e94754245b1e">
+            <caom2:part caom2:id="9c5345bb-f55a-46e7-a6bd-82c2b4a343d9">
               <caom2:name>0</caom2:name>
-              <caom2:productType>auxiliary</caom2:productType>
               <caom2:chunks/>
             </caom2:part>
-            <caom2:part caom2:id="76c8b15b-6614-4752-a259-c9e4730dc806">
-              <caom2:name>TELLU_TEMP</caom2:name>
-              <caom2:productType>science</caom2:productType>
+            <caom2:part caom2:id="261504e2-cc41-457f-add2-d182e741c1c7">
+              <caom2:name>1</caom2:name>
               <caom2:chunks>
-                <caom2:chunk caom2:id="1b187ada-d62d-4def-b42b-c30451a8d4b4">
+                <caom2:chunk caom2:id="b81e2afb-3fdf-4da4-b17e-226fff0a1e00" caom2:metaProducer="apero2caom2/0.1.0">
+                  <caom2:naxis>2</caom2:naxis>
+                  <caom2:positionAxis1>1</caom2:positionAxis1>
+                  <caom2:positionAxis2>2</caom2:positionAxis2>
                   <caom2:position>
                     <caom2:axis>
                       <caom2:axis1>
@@ -94,11 +77,11 @@
                         <caom2:refCoord>
                           <caom2:coord1>
                             <caom2:pix>1.0</caom2:pix>
-                            <caom2:val>269.4485025</caom2:val>
+                            <caom2:val>0.0</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
                             <caom2:pix>1.0</caom2:pix>
-                            <caom2:val>4.739420051</caom2:val>
+                            <caom2:val>0.0</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
                         <caom2:cd11>-0.00035833</caom2:cd11>
@@ -107,54 +90,182 @@
                         <caom2:cd22>0.00035833</caom2:cd22>
                       </caom2:function>
                     </caom2:axis>
-                    <caom2:coordsys>FK5</caom2:coordsys>
-                    <caom2:equinox>2000.0</caom2:equinox>
+                    <caom2:coordsys>ICRS</caom2:coordsys>
                   </caom2:position>
-                  <caom2:time>
-                    <caom2:axis>
-                      <caom2:axis>
-                        <caom2:ctype>TIME</caom2:ctype>
-                        <caom2:cunit>d</caom2:cunit>
-                      </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
-                      <caom2:function>
-                        <caom2:naxis>1</caom2:naxis>
-                        <caom2:delta>6.44898148148148e-05</caom2:delta>
-                        <caom2:refCoord>
-                          <caom2:pix>0.5</caom2:pix>
-                          <caom2:val>59073.174596912475</caom2:val>
-                        </caom2:refCoord>
-                      </caom2:function>
-                    </caom2:axis>
-                    <caom2:timesys>UTC</caom2:timesys>
-                    <caom2:exposure>61.291</caom2:exposure>
-                    <caom2:resolution>5.57192</caom2:resolution>
-                  </caom2:time>
                 </caom2:chunk>
               </caom2:chunks>
             </caom2:part>
-            <caom2:part caom2:id="b424c9c5-0391-4dd2-942e-1a32f9a2cd83">
-              <caom2:name>TEMPLATE_TABLE</caom2:name>
-              <caom2:productType>auxiliary</caom2:productType>
-              <caom2:chunks/>
+            <caom2:part caom2:id="75354752-867d-4821-8002-4c62119c5998">
+              <caom2:name>2</caom2:name>
+              <caom2:chunks>
+                <caom2:chunk caom2:id="cdfffc47-7c5b-445f-97bf-7dbcce939cf3" caom2:metaProducer="apero2caom2/0.1.0">
+                  <caom2:naxis>2</caom2:naxis>
+                  <caom2:positionAxis1>1</caom2:positionAxis1>
+                  <caom2:positionAxis2>2</caom2:positionAxis2>
+                  <caom2:position>
+                    <caom2:axis>
+                      <caom2:axis1>
+                        <caom2:ctype>RA---TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis1>
+                      <caom2:axis2>
+                        <caom2:ctype>DEC--TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis2>
+                      <caom2:function>
+                        <caom2:dimension>
+                          <caom2:naxis1>1</caom2:naxis1>
+                          <caom2:naxis2>1</caom2:naxis2>
+                        </caom2:dimension>
+                        <caom2:refCoord>
+                          <caom2:coord1>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord1>
+                          <caom2:coord2>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord2>
+                        </caom2:refCoord>
+                        <caom2:cd11>-0.00035833</caom2:cd11>
+                        <caom2:cd12>0.0</caom2:cd12>
+                        <caom2:cd21>0.0</caom2:cd21>
+                        <caom2:cd22>0.00035833</caom2:cd22>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:coordsys>ICRS</caom2:coordsys>
+                  </caom2:position>
+                </caom2:chunk>
+              </caom2:chunks>
             </caom2:part>
-            <caom2:part caom2:id="e85d2203-eae5-4405-8037-89a3b3ac04a4">
-              <caom2:name>BERV_TABLE</caom2:name>
-              <caom2:productType>auxiliary</caom2:productType>
-              <caom2:chunks/>
+            <caom2:part caom2:id="11bbe83b-7250-48b1-a986-c8324cbab8aa">
+              <caom2:name>3</caom2:name>
+              <caom2:chunks>
+                <caom2:chunk caom2:id="d7470cb1-eeba-4c46-a073-81e3e1032b92" caom2:metaProducer="apero2caom2/0.1.0">
+                  <caom2:naxis>2</caom2:naxis>
+                  <caom2:positionAxis1>1</caom2:positionAxis1>
+                  <caom2:positionAxis2>2</caom2:positionAxis2>
+                  <caom2:position>
+                    <caom2:axis>
+                      <caom2:axis1>
+                        <caom2:ctype>RA---TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis1>
+                      <caom2:axis2>
+                        <caom2:ctype>DEC--TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis2>
+                      <caom2:function>
+                        <caom2:dimension>
+                          <caom2:naxis1>1</caom2:naxis1>
+                          <caom2:naxis2>1</caom2:naxis2>
+                        </caom2:dimension>
+                        <caom2:refCoord>
+                          <caom2:coord1>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord1>
+                          <caom2:coord2>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord2>
+                        </caom2:refCoord>
+                        <caom2:cd11>-0.00035833</caom2:cd11>
+                        <caom2:cd12>0.0</caom2:cd12>
+                        <caom2:cd21>0.0</caom2:cd21>
+                        <caom2:cd22>0.00035833</caom2:cd22>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:coordsys>ICRS</caom2:coordsys>
+                  </caom2:position>
+                </caom2:chunk>
+              </caom2:chunks>
             </caom2:part>
-            <caom2:part caom2:id="9bf94ae1-afb3-4ba3-b58c-41b365aad843">
-              <caom2:name>COMBINE_TABLE</caom2:name>
-              <caom2:productType>auxiliary</caom2:productType>
-              <caom2:chunks/>
+            <caom2:part caom2:id="7d4959cb-e557-4546-85d2-9c9addaf823a">
+              <caom2:name>4</caom2:name>
+              <caom2:chunks>
+                <caom2:chunk caom2:id="39e36ff4-25bb-4658-a222-4312f2168266" caom2:metaProducer="apero2caom2/0.1.0">
+                  <caom2:naxis>2</caom2:naxis>
+                  <caom2:positionAxis1>1</caom2:positionAxis1>
+                  <caom2:positionAxis2>2</caom2:positionAxis2>
+                  <caom2:position>
+                    <caom2:axis>
+                      <caom2:axis1>
+                        <caom2:ctype>RA---TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis1>
+                      <caom2:axis2>
+                        <caom2:ctype>DEC--TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis2>
+                      <caom2:function>
+                        <caom2:dimension>
+                          <caom2:naxis1>1</caom2:naxis1>
+                          <caom2:naxis2>1</caom2:naxis2>
+                        </caom2:dimension>
+                        <caom2:refCoord>
+                          <caom2:coord1>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord1>
+                          <caom2:coord2>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord2>
+                        </caom2:refCoord>
+                        <caom2:cd11>-0.00035833</caom2:cd11>
+                        <caom2:cd12>0.0</caom2:cd12>
+                        <caom2:cd21>0.0</caom2:cd21>
+                        <caom2:cd22>0.00035833</caom2:cd22>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:coordsys>ICRS</caom2:coordsys>
+                  </caom2:position>
+                </caom2:chunk>
+              </caom2:chunks>
             </caom2:part>
-            <caom2:part caom2:id="38aaefe4-f868-4143-9b2d-b735aed952fb">
-              <caom2:name>PARAM_TABLE</caom2:name>
-              <caom2:productType>auxiliary</caom2:productType>
-              <caom2:chunks/>
+            <caom2:part caom2:id="5d4daf95-1385-43da-a85b-87d2d665d1a9">
+              <caom2:name>5</caom2:name>
+              <caom2:chunks>
+                <caom2:chunk caom2:id="03213754-7ca7-43dd-925a-4a6a0b25fb1c" caom2:metaProducer="apero2caom2/0.1.0">
+                  <caom2:naxis>2</caom2:naxis>
+                  <caom2:positionAxis1>1</caom2:positionAxis1>
+                  <caom2:positionAxis2>2</caom2:positionAxis2>
+                  <caom2:position>
+                    <caom2:axis>
+                      <caom2:axis1>
+                        <caom2:ctype>RA---TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis1>
+                      <caom2:axis2>
+                        <caom2:ctype>DEC--TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis2>
+                      <caom2:function>
+                        <caom2:dimension>
+                          <caom2:naxis1>1</caom2:naxis1>
+                          <caom2:naxis2>1</caom2:naxis2>
+                        </caom2:dimension>
+                        <caom2:refCoord>
+                          <caom2:coord1>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord1>
+                          <caom2:coord2>
+                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:val>0.0</caom2:val>
+                          </caom2:coord2>
+                        </caom2:refCoord>
+                        <caom2:cd11>-0.00035833</caom2:cd11>
+                        <caom2:cd12>0.0</caom2:cd12>
+                        <caom2:cd21>0.0</caom2:cd21>
+                        <caom2:cd22>0.00035833</caom2:cd22>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:coordsys>ICRS</caom2:coordsys>
+                  </caom2:position>
+                </caom2:chunk>
+              </caom2:chunks>
             </caom2:part>
           </caom2:parts>
         </caom2:artifact>

@@ -77,7 +77,8 @@ from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, 
 from apero2caom2.main_app import set_storage_name_from_local_preconditions
 
 
-def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
+def test_main_app_no_blueprint(test_config, tmp_path, test_data_dir, change_test_dir):
+    # this tests what happens when there is no blueprint or module file to be found
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
@@ -105,9 +106,40 @@ def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
     observation = file2caom2_augmentation.visit(observation, **kwargs)
     observation = provenance_augmentation.visit(observation, **kwargs)
     observation = preview_augmentation.visit(observation, **kwargs)
+    assert observation is None, 'no supporting files, this is where it stops'
+
+
+def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
+    # this tests what happens when there is a blueprint and a module file for
+    # an instrument named "DIFFERENT"
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    test_config.change_working_directory(tmp_path.as_posix())
+    test_config.lookup['instrument'] = 'DIFFERENT'
+    test_config.lookup['blueprint_directory'] = f'{test_data_dir}/blueprints'
+
+    expected_fqn = f'{test_data_dir}/something_else.expected.xml'
+    actual_fqn = expected_fqn.replace('expected', 'actual')
+    if os.path.exists(actual_fqn):
+        os.unlink(actual_fqn)
+    observation = None
+    test_file_name = f'{test_data_dir}/Template_GL699/Template_GL699_tellu_obj_AB.fits.header'
+    storage_name = main_app.APEROName(instrument='DIFFERENT', source_names=[test_file_name])
+    set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
+    test_reporter = ExecutionReporter2(test_config)
+    kwargs = {
+        'storage_name': storage_name,
+        'reporter': test_reporter,
+        'config': test_config,
+        'clients': Mock(),
+    }
+    observation = file2caom2_augmentation.visit(observation, **kwargs)
+    observation = provenance_augmentation.visit(observation, **kwargs)
+    observation = preview_augmentation.visit(observation, **kwargs)
 
     if observation is None:
-        assert False, f'Did not create observation for SOMETHING_ELSE'
+        assert False, f'Did not create observation for DIFFERENT'
     else:
         if os.path.exists(expected_fqn):
             expected = read_obs_from_file(expected_fqn)

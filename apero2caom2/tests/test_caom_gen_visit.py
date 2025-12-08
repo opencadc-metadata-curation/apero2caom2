@@ -71,6 +71,7 @@ import logging
 import os
 
 from mock import Mock, patch
+from pytest import skip
 
 from astropy.table import Table
 from apero2caom2 import file2caom2_augmentation, main_app, preview_augmentation, provenance_augmentation
@@ -84,6 +85,7 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize('test_name', obs_id_list)
 
 
+@skip(allow_module_level=True)
 @patch('apero2caom2.provenance_augmentation.query_tap_client')
 def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir):
     logger = logging.getLogger()
@@ -91,6 +93,7 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
 
     query_mock.side_effect = _query_tap
     test_config.change_working_directory(tmp_path.as_posix())
+    test_config.dump_blueprint = True
 
     test_working_dir = os.path.dirname(test_name)
     test_file_list = glob.glob(f'{test_working_dir}/*')

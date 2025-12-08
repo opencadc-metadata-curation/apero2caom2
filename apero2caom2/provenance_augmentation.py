@@ -95,7 +95,7 @@ class APEROProvenanceVisitor:
             return self.observation
 
         if self.storage_name.instrument_value.lower() != 'spirou':
-            self.logger.info(f'No provenance metadata for {self.storage_name.instrument_value}. Returning.')
+            self.logger.info(f'No provenance metadata for instrument {self.storage_name.instrument_value}. Returning.')
             return self.observation
 
         self.logger.debug(f'Begin visit for {self.observation.observation_id}')
@@ -182,12 +182,14 @@ class APEROProvenanceVisitor:
             for plane in self.observation.planes.values():
                 # some planes have no metadata to speak of that is not obtained from other planes, so ensure the
                 # authorization metadata is consistent.
-                self.logger.debug(f'Adding group {group_name} in plane {visit_plane.product_id}')
                 plane.data_read_groups.add(group_name)
                 plane.meta_read_groups.add(group_name)
-                self.observation.meta_read_groups.add(group_name)
 
-        self.logger.debug(f'End visit with counts {counts}')
+        # blueprint handling can remove the observation-level values, so undo that here
+        for plane in self.observation.planes.values():
+            for group in plane.meta_read_groups:
+                self.observation.meta_read_groups.add(group)
+
         return self.observation
 
 
