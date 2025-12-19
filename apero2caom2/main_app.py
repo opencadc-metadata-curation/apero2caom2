@@ -73,9 +73,7 @@ This module implements the ObsBlueprint mapping.
 from datetime import datetime, timedelta
 from os.path import basename
 
-from caom2 import Chunk, Part, ProductType
-from caom2pipe.astro_composable import get_geocentric_location
-from caom2pipe.caom_composable import TelescopeMapping2
+from caom2 import ProductType
 from caom2pipe.execute_composable import (
     CaomExecuteRunnerMeta,
     OrganizeExecutesRunnerMeta,
@@ -84,15 +82,13 @@ from caom2pipe.execute_composable import (
     NoFheadVisitRunnerMeta,
 )
 from caom2pipe.manage_composable import (
-    CadcException, get_keyword, search_for_source_name, StorageName, TaskType, to_int
+    CadcException, get_keyword, search_for_source_name, StorageName, TaskType
 )
 from caom2utils.data_util import get_local_file_info, get_local_file_headers
-from caom2utils.wcs_parsers import FitsWcsParser
 from apero2caom2.cfht_name import CFHTName
 
 
 __all__ = [
-    # 'APEROMapping',
     'APEROName',
 ]
 
@@ -132,7 +128,10 @@ class APEROName(CFHTName):
     def product_type(self):
         result = ProductType.SCIENCE
         if '.png' in self._file_name:
-            result = ProductType.PREVIEW
+            if '256' in self._file_name:
+                result = ProductType.THUMBNAIL
+            else:
+                result = ProductType.PREVIEW
         elif '.rdb' in self._file_name:
             result = ProductType.AUXILIARY
         return result
@@ -145,268 +144,51 @@ class APEROName(CFHTName):
     def is_valid(self):
         return True
 
-    def set_obs_id(self, **kwargs):
-        iv_lower = self._instrument_value.lower()
-        bits = self.file_name.split('_')
-        if self._file_id.startswith('debug_'):
-            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else 'target'
-        elif self._file_id.startswith('ccf_'):
-            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else 'target'
-        elif 'tellu_' in self._file_id:
-            self._object = bits[bits.index('tellu') - 1] if 'tellu' in bits else 'target'
-        elif self._file_id.startswith('lbl'):
-            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else bits[1]
-        elif '_s1dw_' in self._file_id or '_s1dv_' in self._file_id:
-            self._object = bits[bits.index('s1dw') + 1] if 's1dw' in bits else 'target'
-            if self._object == 'target':
-                self._object = bits[bits.index('s1dv') + 1] if 's1dv' in bits else 'target'
-        elif self._file_id.startswith('spec_'):
-            self._object = bits[bits.index(iv_lower) - 1] if iv_lower in bits else bits[1]
-        else:
-            raise CadcException(f'Could not set observation ID for {self.file_name}')
-        self._obs_id = f'Template_{self._object}'
+    def set_file_id(self):
+        self._file_id = APEROName.remove_extensions(self._file_name)
+        self._suffix = None
+        if self.sequence_number is not None:
+            # for file names that have _flag or _diag in them
+            self._suffix = self._file_id.split('_')[0][-1]
 
     def set_product_id(self, **kwargs):
-        if self._file_id.startswith('debug_'):
-            self._product_id = f'debug_{self._object}'
-        elif self._file_id.startswith('ccf_'):
-            self._product_id = f'ccf_{self._object}'
-        elif 'tellu_' in self._file_id:
-            self._product_id = f'telluric_{self._object}'
-        elif self._file_id.startswith('lbl'):
-            self._product_id = f'lbl_{self._object}'
-        elif '_s1dw_' in self._file_id or '_s1dv_' in self._file_id:
-            self._product_id = f'spectrum_{self._object}'
-        elif self._file_id.startswith('spec_'):
-            self._product_id = f'spectrum_{self._object}'
+        # DRS_POST_<suffix>
+        # TELLU_TEMP_S1DW
+        # TELLU_TEMP_S1DV
+        # TELLU_TEMP
+        # LBL_FITS
+        # LBL_RDB_FITS
+        # LBL_RDB
+        # LBL_RDB2
+        # LBL_RDB_DRIFT
+        # LBL_RDB2_DRIFT
+
+        if 'lbl_' in self._file_id:
+            if self._file_name.endswith('.rdb'):
+                if '_drift' in self._file_id:
+                    self._product_id = 'LBL_RDB_DRIFT'
+                else:
+                    self._product_id = 'LBL_RDB'
+            elif self._file_name.endswith('.fits'):
+                self._product_id = 'LBL_RDB_FITS'
+        elif 'lbl2_' in self._file_id and self._file_name.endswith('.rdb'):
+            if '_drift' in self._file_id:
+                self._product_id = 'LBL_RDB2_DRIFT'
+            else:
+                self._product_id = 'LBL_RDB2'
+        elif 'Template_' in self._file_id:
+            if '_s1dw_' in self._file_id:
+                self._product_id = 'TELLU_TEMP_S1DW'
+            elif '_s1dv_' in self._file_id:
+                self._product_id = 'TELLU_TEMP_S1DV'
+            else:
+                self._product_id = 'TELLU_TEMP'
         else:
-            raise CadcException(f'Could not set observation ID for {self.file_name}')
+            self._product_id = 'NO_GUIDANCE'
 
     @staticmethod
     def remove_extensions(name):
         return CFHTName.remove_extensions(name).replace('.rdb', '').replace('.png', '')
-
-
-# class APEROPostageStampMapping(TelescopeMapping2):
-
-#     def accumulate_blueprint(self, bp):
-#         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
-#         self._logger.debug('Begin accumulate_bp.')
-#         super().accumulate_blueprint(bp)
-
-#         bp.set('DerivedObservation.members', {})
-#         bp.set('Observation.algorithm.name', 'LineByLine')
-#         if self._storage_name.instrument_value.lower() == 'spirou':
-#             bp.set('Observation.telescope.name', 'CFHT 3.6m')
-#             x, y, z = get_geocentric_location('cfht')
-#             bp.set('Observation.telescope.geoLocationX', x)
-#             bp.set('Observation.telescope.geoLocationY', y)
-#             bp.set('Observation.telescope.geoLocationZ', z)
-
-#         # No proposal information for DerivedObservations
-
-#         bp.set('Plane.calibrationLevel', 2)
-#         bp.set('Plane.dataProductType', 'spectrum')
-#         if '.png' in self._storage_name.file_name:
-#             bp.set('Artifact.productType', 'preview')
-#         elif '.rdb' in self._storage_name.file_name:
-#             bp.set('Plane.dataProductType', 'timeseries')
-#             bp.set('Artifact.productType', 'auxiliary')
-#         bp.set('Artifact.releaseType', 'data')
-
-#         self._logger.debug('Done accumulate_bp.')
-
-#     def _init_read_groups(self, config):
-#         super()._init_read_groups(config)
-#         if self._observation:
-#             for group in self._observation.meta_read_groups:
-#                 self._meta_read_groups.add(group)
-#                 self._data_read_groups.add(group)
-
-#     def _update_artifact(self, artifact):
-#         pass
-
-#     def update(self):
-#         """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes
-#         and CAOM attributes).
-#         """
-#         self._observation = super().update()
-#         self._set_authorization_plane_metadata()
-#         return self._observation
-
-#     def _set_authorization_plane_metadata(self):
-#         # The Plane-level metadata for the ccf, debug and lbl planes has to come from a different plane, as there's no
-#         # metadata to scrape from the png or rdb files. Pick the any plane with fits files for the data source.
-#         plane_bits = self._storage_name.product_id.split('_')
-#         ccf_product_id = f'ccf_{plane_bits[1]}'
-#         debug_product_id = f'debug_{plane_bits[1]}'
-#         lbl_product_id = f'lbl_{plane_bits[1]}'
-#         spectrum_product_id = f'spectrum_{plane_bits[1]}'
-#         telluric_product_id = f'telluric_{plane_bits[1]}'
-#         self._logger.debug(
-#             f'Begin _set_authorization_plane_metadata with keys {ccf_product_id}, {debug_product_id}, '
-#             f'{lbl_product_id}, {spectrum_product_id} and {telluric_product_id}'
-#         )
-#         if (
-#             spectrum_product_id in self._observation.planes.keys()
-#             or telluric_product_id in self._observation.planes.keys()
-#         ):
-#             source_plane = self._observation.planes.get(spectrum_product_id)
-#             if source_plane is None:
-#                 source_plane = self._observation.planes.get(telluric_product_id)
-#             if source_plane.meta_release:
-#                 self._observation.meta_release = source_plane.meta_release
-#             for destination_product_id in [ccf_product_id, debug_product_id, lbl_product_id]:
-#                 if destination_product_id in self._observation.planes.keys():
-#                     self._logger.debug(f'Copying plane authorization metadata for {destination_product_id}')
-#                     destination_plane = self._observation.planes.get(destination_product_id)
-
-#                     # copy over information that supports authorization
-#                     destination_plane.data_read_groups = source_plane.data_read_groups
-#                     destination_plane.meta_read_groups = source_plane.meta_read_groups
-#                     if source_plane.meta_release:
-#                         destination_plane.meta_release = source_plane.meta_release
-#                     if source_plane.data_release:
-#                         destination_plane.data_release = source_plane.data_release
-#         self._logger.debug('End _set_authorization_plane_metadata')
-
-
-# class APEROMapping(APEROPostageStampMapping):
-
-#     def accumulate_blueprint(self, bp):
-#         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
-#         self._logger.debug('Begin accumulate_bp.')
-#         super().accumulate_blueprint(bp)
-
-#         bp.set('DerivedObservation.members', {})
-#         bp.set('Observation.algorithm.name', 'LineByLine')
-
-#         # No proposal information for DerivedObservations
-
-#         bp.add_attribute('Observation.target.name', 'DRSOBJN')
-#         bp.add_attribute('Observation.target_position.point.cval1', 'PP_RA')
-#         bp.add_attribute('Observation.target_position.point.cval2', 'PP_DEC')
-#         bp.add_attribute('Observation.target_position.coordsys', 'RADECSYS')
-
-#         bp.set('Plane.calibrationLevel', 2)
-#         bp.set('Plane.dataProductType', 'spectrum')
-#         # bp.add_attribute('Plane.dataRelease', 'DRSVDATE')
-#         bp.add_attribute('Plane.metrics.magLimit', 'OBJMAG')
-#         # approximately two years in the future, to cover the cases where provenance metadata is not scrapable
-#         default_release_date = (datetime.now() + timedelta(weeks=104)).isoformat()
-#         bp.set_default('Plane.dataRelease', default_release_date)
-#         bp.set_default('Plane.metaRelease', default_release_date)
-#         bp.set('Plane.provenance.name', 'APERO')
-#         bp.add_attribute('Plane.provenance.lastExecuted', 'DRSPDATE')
-#         bp.set('Plane.provenance.reference', 'https://apero.exoplanets.ca/')
-#         bp.add_attribute('Plane.provenance.runID', 'DRSPID')
-#         bp.add_attribute('Plane.provenance.version', 'VERSION')
-#         bp.set('Artifact.productType', 'science')
-#         bp.set('Artifact.releaseType', 'data')
-
-#         bp.configure_position_axes((1, 2))
-#         bp.set('Chunk.position.axis.axis1.ctype', 'RA---TAN')
-#         bp.set('Chunk.position.axis.axis2.ctype', 'DEC--TAN')
-#         bp.set('Chunk.position.axis.function.dimension.naxis1', 1)
-#         bp.set('Chunk.position.axis.function.dimension.naxis2', 1)
-#         bp.set('Chunk.position.axis.function.refCoord.coord1.pix', 1.0)
-#         bp.set('Chunk.position.axis.function.refCoord.coord2.pix', 1.0)
-#         bp.set('Chunk.position.axis.function.refCoord.coord1.val', '_get_ra_deg_from_0th_header()')
-#         bp.set('Chunk.position.axis.function.refCoord.coord2.val', '_get_dec_deg_from_0th_header()')
-#         bp.set('Chunk.position.axis.function.cd11', -0.00035833)
-#         bp.set('Chunk.position.axis.function.cd12', 0.0)
-#         bp.set('Chunk.position.axis.function.cd21', 0.0)
-#         bp.set('Chunk.position.axis.function.cd22', 0.00035833)
-#         bp.set('Chunk.position.coordsys', '_get_position_coordsys_from_0th_header()')
-#         bp.set('Chunk.position.equinox', '_get_position_equinox_from_0th_header()')
-
-#         bp.configure_time_axis(3)
-#         bp.set('Chunk.time.resolution', '_get_time_resolution()')
-#         bp.add_attribute('Chunk.time.exposure', 'EXPTIME')
-#         bp.set('Chunk.time.timesys', 'UTC')
-#         bp.set('Chunk.time.axis.axis.ctype', 'TIME')
-#         bp.set('Chunk.time.axis.axis.cunit', 'd')
-#         bp.set('Chunk.time.axis.error.syser', '1e-07')
-#         bp.set('Chunk.time.axis.error.rnder', '1e-07')
-#         bp.set('Chunk.time.axis.function.naxis', '1')
-#         bp.set('Chunk.time.axis.function.delta', '_get_time_function_delta()')
-#         bp.set('Chunk.time.axis.function.refCoord.pix', '0.5')
-#         # bp.set('Chunk.time.axis.function.refCoord.val', '_get_time_function_val()')
-#         bp.add_attribute('Chunk.time.axis.function.refCoord.val', 'MJDMID')
-
-#         # bp.configure_energy_axis(4)
-#         # bp.configure_polarization_axis(5)
-#         # bp.configure_observable_axis(6)
-#         self._logger.debug('Done accumulate_bp.')
-
-#     def _get_dec_deg_from_0th_header(self, ext):
-#         return self._storage_name.metadata.get(self._storage_name.file_uri)[0].get('PP_DEC')
-
-#     def _get_position_coordsys_from_0th_header(self, ext):
-#         return self._headers[ext].get('RADECSYS')
-
-#     def _get_position_equinox_from_0th_header(self, ext):
-#         return self._headers[ext].get('EQUINOX')
-
-#     def _get_time_function_delta(self, ext):
-#         result = None
-#         temp = self._headers[ext].get('FRMTIME')
-#         if temp is not None:
-#             result = temp / (24.0 * 3600.0)
-#         return result
-
-#     def _get_ra_deg_from_0th_header(self, ext):
-#         return self._storage_name.metadata.get(self._storage_name.file_uri)[0].get('PP_RA')
-
-#     def _get_time_resolution(self, ext):
-#         result = self._get_time_function_delta(ext)
-#         if result is not None:
-#             result = result * (24.0 * 3600.0)
-#         return result
-
-#     def _update_artifact(self, artifact):
-#         self._logger.debug(f'Begin _update_artifact {artifact.uri}')
-#         # a Part instance in parts is immutable
-#         SCIENCE_PARTS = ['TELLU_TEMP_S1DW', 'TELLU_TEMP_S1DV', 'TELLU_TEMP']
-#         new_parts = []
-#         old_parts = []
-#         for part in artifact.parts.values():
-#             # rename the part names to the extension names
-#             try:
-#                 idx = to_int(part.name)
-#             except (ValueError, TypeError):
-#                 # if this happens, all the fixes meant to occur in this loop have already been done
-#                 continue
-#             header = self._storage_name.metadata.get(self._storage_name.file_uri)[idx]
-#             extname = header.get('EXTNAME', '0')
-#             new_part = Part(extname)
-#             new_parts.append(new_part)
-#             old_parts.append(part)
-#             if extname in SCIENCE_PARTS:
-#                 new_part.product_type = ProductType.SCIENCE
-#             else:
-#                 new_part.product_type = ProductType.AUXILIARY
-
-#             # add the Chunk metadata to the relevant Part
-#             if new_part.name in SCIENCE_PARTS:
-#                 self._logger.debug(f'Adding Chunk to {new_part.name} Part')
-#                 primary_chunk = Chunk()
-#                 primary_header = self._storage_name.metadata.get(self._storage_name.file_uri)[0]
-#                 wcs_parser = FitsWcsParser(primary_header, self._storage_name.obs_id, 0)
-#                 wcs_parser.augment_temporal(primary_chunk)
-#                 wcs_parser.augment_position(primary_chunk)
-#                 primary_chunk.position_axis_1 = None
-#                 primary_chunk.position_axis_2 = None
-#                 primary_chunk.time_axis = None
-#                 new_part.chunks.append(primary_chunk)
-
-#         for part in old_parts:
-#             artifact.parts.pop(part.name)
-
-#         for part in new_parts:
-#             artifact.parts.add(part)
-
-#         self._logger.debug('End _update_artifact')
 
 
 class APERONoFheadVisitRunnerMeta(NoFheadVisitRunnerMeta):
@@ -588,12 +370,6 @@ def set_storage_name_from_local_preconditions(storage_name, working_directory, l
             storage_name._file_uri = uri
             storage_name._destination_uris.append(uri)
 
-        # now reset the storage name instance to use the destination URIs, because common code expects URIs
-        if target:
-            if 'Template' in storage_name.file_name:
-                storage_name._obs_id = f'Template_{target}'
-            else:
-                storage_name._obs_id = target
         for index, source_name in enumerate(storage_name.source_names):
             uri = storage_name.destination_uris[index]
             storage_name.file_info[uri] = file_info.get(source_name)

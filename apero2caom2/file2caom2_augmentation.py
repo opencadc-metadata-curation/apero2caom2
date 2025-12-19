@@ -157,15 +157,6 @@ class File2caom2Visitor:
             # for backwards compatibility with caom2repo
             self.update_method_module = getattr(self.module, 'ObservationUpdater')()
 
-        # if not hasattr(self.update_method, 'update'):
-        #     msg = (
-        #         f'The plugin {self.module.__name__} is not correct.  It must provide one of:\n'
-        #         '1 - a function named update, or\n'
-        #         '2 - a class ObservationUpdater with a function named update.\n '
-        #         'In either case, the update signature needs to be (Observation, **kwargs).'
-        #     )
-        #     raise ImportError(msg)
-
     def _loaded_module_visit(self, parser, visit_local):
         result = self.observation
         kwargs = {}
@@ -260,24 +251,6 @@ class File2caom2Visitor:
 
         self.logger.debug('End visit')
         return self.observation
-
-
-# class APEROFits2caom2Visitor(File2caom2Visitor):
-
-#     def _get_mappings(self, dest_uri):
-#         if '.fits' in dest_uri:
-#             self._logger.debug('APEROMapping')
-#             return [main_app.APEROMapping(
-#                 self._storage_name, self._clients, self._reporter, self._observation, self._config
-#             )]
-#         elif '.png' in dest_uri or '.rdb':
-#             self._logger.debug('APEROPostageStampMapping')
-#             return [main_app.APEROPostageStampMapping(
-#                 self._storage_name, self._clients, self._reporter, self._observation, self._config
-#             )]
-#         else:
-#             self._logger.debug('TelescopeMapping2')
-#             return super()._get_mappings(dest_uri)
 
 
 def visit(observation, **kwargs):

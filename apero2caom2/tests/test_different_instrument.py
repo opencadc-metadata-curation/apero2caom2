@@ -71,7 +71,7 @@ import os
 
 from mock import Mock
 
-from apero2caom2 import file2caom2_augmentation, main_app, preview_augmentation, provenance_augmentation
+from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
 from caom2.diff import get_differences
 from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
 from apero2caom2.main_app import set_storage_name_from_local_preconditions
@@ -90,7 +90,7 @@ def test_main_app_no_blueprint(test_config, tmp_path, test_data_dir, change_test
     if os.path.exists(actual_fqn):
         os.unlink(actual_fqn)
     observation = None
-    test_file_name = f'{test_data_dir}/Template_GL699/Template_GL699_tellu_obj_AB.fits.header'
+    test_file_name = f'{test_data_dir}/bp_tests/Template_GL699_tellu_obj_AB.fits.header'
     storage_name = main_app.APEROName(
         instrument='SOMETHING_ELSE',
         source_names=[test_file_name]
@@ -105,7 +105,6 @@ def test_main_app_no_blueprint(test_config, tmp_path, test_data_dir, change_test
     }
     observation = file2caom2_augmentation.visit(observation, **kwargs)
     observation = provenance_augmentation.visit(observation, **kwargs)
-    observation = preview_augmentation.visit(observation, **kwargs)
     assert observation is None, 'no supporting files, this is where it stops'
 
 
@@ -124,7 +123,7 @@ def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
     if os.path.exists(actual_fqn):
         os.unlink(actual_fqn)
     observation = None
-    test_file_name = f'{test_data_dir}/Template_GL699/Template_GL699_tellu_obj_AB.fits.header'
+    test_file_name = f'{test_data_dir}/bp_tests/Template_GL699_tellu_obj_AB.fits.header'
     storage_name = main_app.APEROName(instrument='DIFFERENT', source_names=[test_file_name])
     set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
     test_reporter = ExecutionReporter2(test_config)
@@ -136,7 +135,6 @@ def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
     }
     observation = file2caom2_augmentation.visit(observation, **kwargs)
     observation = provenance_augmentation.visit(observation, **kwargs)
-    observation = preview_augmentation.visit(observation, **kwargs)
 
     if observation is None:
         assert False, f'Did not create observation for DIFFERENT'

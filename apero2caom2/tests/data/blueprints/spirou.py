@@ -87,11 +87,11 @@ def update(observation, **kwargs):
     and CAOM attributes).
     """
     logging.debug(f'Begin update for {observation.observation_id}')
-    product_id = kwargs.get('product_id')
+    # product_id = kwargs.get('product_id')
     headers = kwargs.get('headers')
     uri = kwargs.get('uri')
     file_info = kwargs.get('file_info')
-    _set_authorization_plane_metadata(observation, product_id)
+    # _set_authorization_plane_metadata(observation, product_id)
     for plane in observation.planes.values():
         for artifact in plane.artifacts.values():
             if uri == artifact.uri:
@@ -101,41 +101,41 @@ def update(observation, **kwargs):
     return observation
 
 
-def _set_authorization_plane_metadata(observation, product_id):
-    # The Plane-level metadata for the ccf, debug and lbl planes has to come from a different plane, as there's no
-    # metadata to scrape from the png or rdb files. Pick the any plane with fits files for the data source.
-    plane_bits = product_id.split('_')
-    ccf_product_id = f'ccf_{plane_bits[1]}'
-    debug_product_id = f'debug_{plane_bits[1]}'
-    lbl_product_id = f'lbl_{plane_bits[1]}'
-    spectrum_product_id = f'spectrum_{plane_bits[1]}'
-    telluric_product_id = f'telluric_{plane_bits[1]}'
-    logging.debug(
-        f'Begin _set_authorization_plane_metadata with keys {ccf_product_id}, {debug_product_id}, '
-        f'{lbl_product_id}, {spectrum_product_id} and {telluric_product_id}'
-    )
-    if (
-        spectrum_product_id in observation.planes.keys()
-        or telluric_product_id in observation.planes.keys()
-    ):
-        source_plane = observation.planes.get(spectrum_product_id)
-        if source_plane is None:
-            source_plane = observation.planes.get(telluric_product_id)
-        if source_plane.meta_release:
-            observation.meta_release = source_plane.meta_release
-        for destination_product_id in [ccf_product_id, debug_product_id, lbl_product_id]:
-            if destination_product_id in observation.planes.keys():
-                logging.debug(f'Copying plane authorization metadata for {destination_product_id}')
-                destination_plane = observation.planes.get(destination_product_id)
+# def _set_authorization_plane_metadata(observation, product_id):
+#     # The Plane-level metadata for the ccf, debug and lbl planes has to come from a different plane, as there's no
+#     # metadata to scrape from the png or rdb files. Pick the any plane with fits files for the data source.
+#     plane_bits = product_id.split('_')
+#     ccf_product_id = f'ccf_{plane_bits[1]}'
+#     debug_product_id = f'debug_{plane_bits[1]}'
+#     lbl_product_id = f'lbl_{plane_bits[1]}'
+#     spectrum_product_id = f'spectrum_{plane_bits[1]}'
+#     telluric_product_id = f'telluric_{plane_bits[1]}'
+#     logging.debug(
+#         f'Begin _set_authorization_plane_metadata with keys {ccf_product_id}, {debug_product_id}, '
+#         f'{lbl_product_id}, {spectrum_product_id} and {telluric_product_id}'
+#     )
+#     if (
+#         spectrum_product_id in observation.planes.keys()
+#         or telluric_product_id in observation.planes.keys()
+#     ):
+#         source_plane = observation.planes.get(spectrum_product_id)
+#         if source_plane is None:
+#             source_plane = observation.planes.get(telluric_product_id)
+#         if source_plane.meta_release:
+#             observation.meta_release = source_plane.meta_release
+#         for destination_product_id in [ccf_product_id, debug_product_id, lbl_product_id]:
+#             if destination_product_id in observation.planes.keys():
+#                 logging.debug(f'Copying plane authorization metadata for {destination_product_id}')
+#                 destination_plane = observation.planes.get(destination_product_id)
 
-                # copy over information that supports authorization
-                destination_plane.data_read_groups = source_plane.data_read_groups
-                destination_plane.meta_read_groups = source_plane.meta_read_groups
-                if source_plane.meta_release:
-                    destination_plane.meta_release = source_plane.meta_release
-                if source_plane.data_release:
-                    destination_plane.data_release = source_plane.data_release
-    logging.debug('End _set_authorization_plane_metadata')
+#                 # copy over information that supports authorization
+#                 destination_plane.data_read_groups = source_plane.data_read_groups
+#                 destination_plane.meta_read_groups = source_plane.meta_read_groups
+#                 if source_plane.meta_release:
+#                     destination_plane.meta_release = source_plane.meta_release
+#                 if source_plane.data_release:
+#                     destination_plane.data_release = source_plane.data_release
+#     logging.debug('End _set_authorization_plane_metadata')
 
 
 def _update_artifact(artifact, headers, obs_id):

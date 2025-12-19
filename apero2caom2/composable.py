@@ -81,13 +81,13 @@ import traceback
 from caom2pipe.client_composable import ClientCollection
 from caom2pipe.manage_composable import Config
 from caom2pipe.run_composable import run_by_state_runner_meta, run_by_todo_runner_meta
-from apero2caom2 import file2caom2_augmentation, preview_augmentation, provenance_augmentation
+from apero2caom2 import file2caom2_augmentation, provenance_augmentation
 from apero2caom2.data_source import APEROLocalFilesDataSource, APEROTodoFileDataSource
 from apero2caom2.main_app import APEROName
 
 
 META_VISITORS = [file2caom2_augmentation]
-DATA_VISITORS = [preview_augmentation, provenance_augmentation]
+DATA_VISITORS = [provenance_augmentation]
 
 
 def _common_init():
@@ -98,10 +98,7 @@ def _common_init():
         data_sources = [APEROLocalFilesDataSource(config, clients.data_client)]
     else:
         data_sources = [APEROTodoFileDataSource(config, APEROName)]
-    data_visitors = DATA_VISITORS
-    if config.lookup.get('instrument').lower() != 'spirou':
-        data_visitors = [preview_augmentation]
-    return config, clients, data_sources, data_visitors
+    return config, clients, data_sources
 
 
 def _run():
@@ -111,13 +108,13 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
-    config, clients, data_sources, data_visitors = _common_init()
+    config, clients, data_sources = _common_init()
     return run_by_todo_runner_meta(
         config=config,
         clients=clients,
         sources=data_sources,
         meta_visitors=META_VISITORS,
-        data_visitors=data_visitors,
+        data_visitors=DATA_VISITORS,
         storage_name_ctor=APEROName,
         organizer_module_name='apero2caom2.main_app',
         organizer_class_name='APEROOrganizeExecutesRunnerMeta',
@@ -139,13 +136,13 @@ def run():
 def _run_incremental():
     """Uses a state file with a timestamp to identify the work to be done.
     """
-    config, clients, data_sources, data_visitors = _common_init()
+    config, clients, data_sources = _common_init()
     return run_by_state_runner_meta(
         config=config,
         clients=clients,
         sources=data_sources,
         meta_visitors=META_VISITORS,
-        data_visitors=data_visitors,
+        data_visitors=DATA_VISITORS,
         storage_name_ctor=APEROName,
         organizer_module_name='apero2caom2.main_app',
         organizer_class_name='APEROOrganizeExecutesRunnerMeta',

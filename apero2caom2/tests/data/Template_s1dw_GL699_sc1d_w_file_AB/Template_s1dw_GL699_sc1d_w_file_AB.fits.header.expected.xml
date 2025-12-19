@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <caom2:Observation xmlns:caom2="http://www.opencadc.org/caom2/xml/v2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="caom2:DerivedObservation" caom2:id="df870ab4-e73c-4243-8d5d-a9095ccd8e15" caom2:metaProducer="apero2caom2/0.1.0">
   <caom2:collection>APERO</caom2:collection>
-  <caom2:observationID>Template_GL699</caom2:observationID>
+  <caom2:observationID>Template_s1dw_GL699_sc1d_w_file_AB</caom2:observationID>
   <caom2:metaRelease>2024-01-31T00:00:00.000</caom2:metaRelease>
   <caom2:metaReadGroups>
     <caom2:groupURI>ivo://cadc.nrc.ca/gms?CADC</caom2:groupURI>
@@ -14,6 +14,10 @@
   </caom2:algorithm>
   <caom2:type>OBJECT</caom2:type>
   <caom2:intent>science</caom2:intent>
+  <caom2:proposal>
+    <caom2:id>20BP40</caom2:id>
+    <caom2:pi>Jean-Francois Donati</caom2:pi>
+  </caom2:proposal>
   <caom2:target>
     <caom2:name>GL699</caom2:name>
   </caom2:target>
@@ -35,7 +39,7 @@
   </caom2:instrument>
   <caom2:planes>
     <caom2:plane caom2:id="f1aca624-1a0f-4673-a6a4-dff9592ec6ab" caom2:metaProducer="apero2caom2/0.1.0">
-      <caom2:productID>spectrum_GL699</caom2:productID>
+      <caom2:productID>TELLU_TEMP_S1DW</caom2:productID>
       <caom2:metaRelease>2024-01-31T00:00:00.000</caom2:metaRelease>
       <caom2:metaReadGroups>
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?CADC</caom2:groupURI>

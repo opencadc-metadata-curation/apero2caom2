@@ -74,7 +74,7 @@ from mock import Mock, patch
 from pytest import skip
 
 from astropy.table import Table
-from apero2caom2 import file2caom2_augmentation, main_app, preview_augmentation, provenance_augmentation
+from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
 from caom2.diff import get_differences
 from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
 from apero2caom2.main_app import set_storage_name_from_local_preconditions
@@ -123,7 +123,6 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
         }
         observation = file2caom2_augmentation.visit(observation, **kwargs)
         observation = provenance_augmentation.visit(observation, **kwargs)
-        observation = preview_augmentation.visit(observation, **kwargs)
 
     if observation is None:
         assert False, f'Did not create observation for {test_name}'

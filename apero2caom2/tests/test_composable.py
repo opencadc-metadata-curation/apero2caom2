@@ -163,7 +163,9 @@ def test_run_by_file_store_ingest_modify(
         test_config.data_sources[0], test_file_uri
     ), 'put call args'
     assert clients_mock.return_value.metadata_client.read.called, 'read call'
-    clients_mock.return_value.metadata_client.read.assert_called_with('APERO', 'Template_GL699'), 'read call'
+    clients_mock.return_value.metadata_client.read.assert_called_with(
+        'APERO', 'Template_s1dw_GL699_sc1d_w_file_AB'
+    ), 'read call'
     assert clients_mock.return_value.metadata_client.update.called, 'modify call'
     clients_mock.return_value.metadata_client.update.assert_called_with(ANY), 'modify call'
 

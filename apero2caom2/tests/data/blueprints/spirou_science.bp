@@ -1,12 +1,11 @@
 DerivedObservation.members = []
 Observation.observationID = ['OBSID'], default = None
 Observation.type = ['OBSTYPE'], default = None
-Observation.metaRelease = ['DATE', 'DATE-OBS', 'UTCOBS', 'UTCDATE', 'UTC-DATE', 'MJDOBS', 'MJD_OBS'], default = None
+Observation.metaRelease = ['RELEASE', 'REL_DATE'], default = 2027-11-27T16:35:10.295217
 Observation.metaProducer = apero2caom2/0.1.0
 Observation.algorithm.name = LineByLine
 Observation.instrument.name = ['INSTRUME'], default = None
 Observation.instrument.keywords = ['INSTMODE'], default = None
-Observation.proposal.id = ['RUNID'], default = None
 Observation.target.name = ['DRSOBJN', 'OBJECT'], default = None
 Observation.target_position.point.cval1 = ['PP_RA'], default = None
 Observation.target_position.point.cval2 = ['PP_DEC'], default = None

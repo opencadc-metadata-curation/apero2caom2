@@ -73,7 +73,7 @@ import os
 from mock import Mock, patch
 
 from astropy.table import Table
-from apero2caom2 import file2caom2_augmentation, main_app, preview_augmentation, provenance_augmentation
+from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
 from caom2.diff import get_differences
 from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
 from apero2caom2.main_app import set_storage_name_from_local_preconditions
@@ -94,10 +94,7 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
     test_config.dump_blueprint = True
     test_config.lookup['blueprint_directory'] = f'{test_data_dir}/blueprints'
 
-
-    test_working_dir = os.path.dirname(test_name)
-    test_file_list = glob.glob(f'{test_working_dir}/*')
-
+    test_file_name = test_name.replace('.expected.xml', '')
     in_fqn = test_name.replace('.expected', '.in')
     actual_fqn = test_name.replace('expected', 'actual')
     if os.path.exists(actual_fqn):
@@ -106,34 +103,20 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
     if os.path.exists(in_fqn):
         observation = read_obs_from_file(in_fqn)
 
-    for test_file_name in test_file_list:
-        if test_file_name.endswith('.fits') or '.xml' in test_file_name:
-            continue
-        storage_name = main_app.APEROName(
-            instrument=test_config.lookup.get('instrument'),
-            source_names=[test_file_name]
-        )
-        set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
-        test_reporter = ExecutionReporter2(test_config)
-        kwargs = {
-            'storage_name': storage_name,
-            'reporter': test_reporter,
-            'config': test_config,
-            'clients': Mock(),
-        }
-        # if observation:
-        #     logger.error(len(observation.meta_read_groups))
-        # else:
-        #     logger.error('len is 0')
-        observation = file2caom2_augmentation.visit(observation, **kwargs)
-        # logger.error(len(observation.meta_read_groups))
-        observation = provenance_augmentation.visit(observation, **kwargs)
-        # logger.error(len(observation.meta_read_groups))
-        observation = preview_augmentation.visit(observation, **kwargs)
-        # logger.error(len(observation.meta_read_groups))
-        # logger.error(test_file_name)
-
-        # break  # just want to do one at a time
+    storage_name = main_app.APEROName(
+        instrument=test_config.lookup.get('instrument'),
+        source_names=[test_file_name]
+    )
+    set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
+    test_reporter = ExecutionReporter2(test_config)
+    kwargs = {
+        'storage_name': storage_name,
+        'reporter': test_reporter,
+        'config': test_config,
+        'clients': Mock(),
+    }
+    observation = file2caom2_augmentation.visit(observation, **kwargs)
+    observation = provenance_augmentation.visit(observation, **kwargs)
 
     if observation is None:
         assert False, f'Did not create observation for {test_name}'

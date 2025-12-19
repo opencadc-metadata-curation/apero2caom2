@@ -70,6 +70,7 @@ import logging
 
 from astropy.io import fits
 
+from caom2 import Proposal
 from caom2pipe.caom_composable import make_plane_uri
 from caom2pipe.client_composable import query_tap_client
 from caom2pipe.manage_composable import CadcException, make_datetime, search_for_file
@@ -112,10 +113,15 @@ class APEROProvenanceVisitor:
             raise CadcException(f'Could not find a plane for {self.storage_name}')
         add_these_groups = []
         for source_name in self.storage_name.source_names:
+            pi_name = None
+            prov_proposal_id = None
             if 'fits' in source_name:
                 fqn = search_for_file(self.storage_name, self.config.working_directory).replace('.header', '')
                 self.logger.debug(f'Begin visit for {fqn}')
                 hdus = fits.open(fqn)
+                for hdu in hdus:
+                    if 'PI_NAME' in hdu.header.keys():
+                        pi_name = hdu.header.get('PI_NAME')
                 if 'TEMPLATE_TABLE' in hdus:
                     temp = []
                     provenance = hdus['TEMPLATE_TABLE'].data
@@ -190,6 +196,8 @@ class APEROProvenanceVisitor:
             for group in plane.meta_read_groups:
                 self.observation.meta_read_groups.add(group)
 
+        if prov_proposal_id and pi_name:
+            self.observation.proposal = Proposal(id=prov_proposal_id, pi_name=pi_name)
         return self.observation
 
 
