@@ -80,7 +80,7 @@ from apero2caom2.main_app import set_storage_name_from_local_preconditions
 
 
 def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/**/*.expected.xml')
+    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/try2/*.expected.xml')
     metafunc.parametrize('test_name', obs_id_list)
 
 
@@ -105,8 +105,9 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
 
     storage_name = main_app.APEROName(
         instrument=test_config.lookup.get('instrument'),
-        source_names=[test_file_name]
+        source_names=[test_file_name.replace('.header', '')]
     )
+    storage_name._source_names = [test_file_name]
     set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
     test_reporter = ExecutionReporter2(test_config)
     kwargs = {

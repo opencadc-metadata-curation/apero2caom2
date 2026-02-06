@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -68,10 +68,95 @@
 
 import logging
 
-from caom2 import Chunk, Part, ProductType
+from caom2 import Chunk, DerivedObservation, Part, ProductType, SimpleObservation
 from caom2utils.caom2blueprint import update_artifact_meta
 from caom2utils.wcs_parsers import FitsWcsParser
+from caom2pipe.astro_composable import build_ra_dec_as_deg
 from caom2pipe.manage_composable import to_int
+
+
+def _get_algorithm_name(parameter):
+    """
+    We would like to propose to use the static algorithm name as follow:
+    For *e.fits, *p.fits, *t.fits, *s.fits, *v.fits:
+        Algorithm name is : apero_postprocess_spirou.py
+    For Template*:
+        Algorithm name is : apero_mk_template_spirou.py
+    For LBL_FITS:
+        Algorithm name is : lbl_compute.py
+    For LBL_RDB:
+        Algorithm name is : lbl_compile.py
+    """
+    uri = parameter.get('uri')
+    if '_Template' in uri:
+        result = 'apero_mk_template_spirou.py'
+    elif '_lbl' in uri:
+        if '.fits' in uri:
+            result = 'lbl_compute.py'
+        else:
+            result = 'lbl_compile.py'
+    else:
+        result = 'apero_postprocess_spirou.py'
+    return result
+
+
+def _get_dec(parameter):
+    result = None
+    header = parameter.get('header')
+    objra = header.get('OBJRA')
+    objdec = header.get('OBJDEC')
+    if objra and objdec:
+        _, dec = build_ra_dec_as_deg(objra, objdec, frame='fk5')
+        result = dec
+    return result
+
+
+def _get_polarization_function_val(parameter):
+    header = parameter.get('header')
+    result = header.get('STOKES')
+    lookup = {
+        'I': 1.0,
+        'Q': 2.0,
+        'U': 3.0,
+        'V': 4.0,
+        'W': 5.0,
+    }
+    if result in lookup.keys():
+        result = lookup.get(result)
+    return result
+
+
+def _get_product_id(parameter):
+    header = parameter.get('header')
+    uri = parameter.get('uri')
+    result = header.get('RUNID')
+    if not result:
+        result = uri.split()[-1]
+    return result
+
+
+def _get_product_type(parameter):
+    uri = parameter.get('uri')
+    result = ProductType.SCIENCE
+    if '.png' in uri:
+        if '256' in uri:
+            result = ProductType.THUMBNAIL
+        else:
+            result = ProductType.PREVIEW
+    elif '.rdb' in uri:
+        result = ProductType.AUXILIARY
+    return result
+
+
+def _get_ra(parameter):
+    result = None
+    header = parameter.get('header')
+    objra = header.get('OBJRA')
+    objdec = header.get('OBJDEC')
+    if objra and objdec:
+        ra, _ = build_ra_dec_as_deg(objra, objdec, frame='fk5')
+        result = ra
+    return result
 
 
 def _get_time_function_delta(header):
@@ -82,66 +167,10 @@ def _get_time_function_delta(header):
     return result
 
 
-def update(observation, **kwargs):
-    """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes
-    and CAOM attributes).
-    """
-    logging.debug(f'Begin update for {observation.observation_id}')
-    # product_id = kwargs.get('product_id')
-    headers = kwargs.get('headers')
-    uri = kwargs.get('uri')
-    file_info = kwargs.get('file_info')
-    # _set_authorization_plane_metadata(observation, product_id)
-    for plane in observation.planes.values():
-        for artifact in plane.artifacts.values():
-            if uri == artifact.uri:
-                update_artifact_meta(artifact, file_info)
-                _update_artifact(artifact, headers, observation.observation_id)
-    logging.debug('End update')
-    return observation
-
-
-# def _set_authorization_plane_metadata(observation, product_id):
-#     # The Plane-level metadata for the ccf, debug and lbl planes has to come from a different plane, as there's no
-#     # metadata to scrape from the png or rdb files. Pick the any plane with fits files for the data source.
-#     plane_bits = product_id.split('_')
-#     ccf_product_id = f'ccf_{plane_bits[1]}'
-#     debug_product_id = f'debug_{plane_bits[1]}'
-#     lbl_product_id = f'lbl_{plane_bits[1]}'
-#     spectrum_product_id = f'spectrum_{plane_bits[1]}'
-#     telluric_product_id = f'telluric_{plane_bits[1]}'
-#     logging.debug(
-#         f'Begin _set_authorization_plane_metadata with keys {ccf_product_id}, {debug_product_id}, '
-#         f'{lbl_product_id}, {spectrum_product_id} and {telluric_product_id}'
-#     )
-#     if (
-#         spectrum_product_id in observation.planes.keys()
-#         or telluric_product_id in observation.planes.keys()
-#     ):
-#         source_plane = observation.planes.get(spectrum_product_id)
-#         if source_plane is None:
-#             source_plane = observation.planes.get(telluric_product_id)
-#         if source_plane.meta_release:
-#             observation.meta_release = source_plane.meta_release
-#         for destination_product_id in [ccf_product_id, debug_product_id, lbl_product_id]:
-#             if destination_product_id in observation.planes.keys():
-#                 logging.debug(f'Copying plane authorization metadata for {destination_product_id}')
-#                 destination_plane = observation.planes.get(destination_product_id)
-
-#                 # copy over information that supports authorization
-#                 destination_plane.data_read_groups = source_plane.data_read_groups
-#                 destination_plane.meta_read_groups = source_plane.meta_read_groups
-#                 if source_plane.meta_release:
-#                     destination_plane.meta_release = source_plane.meta_release
-#                 if source_plane.data_release:
-#                     destination_plane.data_release = source_plane.data_release
-#     logging.debug('End _set_authorization_plane_metadata')
-
-
-def _update_artifact(artifact, headers, obs_id):
+def _update_artifact(artifact, headers, observation):
     # over-ride default part names with the extension names, and set the ProductTypes accordingly
     logging.debug(f'Begin _update_artifact {artifact.uri}')
-    # a Part instance in parts is immutable
+    # a Part instance in parts is immutable, so changing the name requires removing old parts, and adding new parts
     SCIENCE_PARTS = ['TELLU_TEMP_S1DW', 'TELLU_TEMP_S1DV', 'TELLU_TEMP']
     new_parts = []
     old_parts = []
@@ -159,16 +188,37 @@ def _update_artifact(artifact, headers, obs_id):
         if extname in SCIENCE_PARTS:
             new_part.product_type = ProductType.SCIENCE
         else:
-            new_part.product_type = ProductType.AUXILIARY
+            if isinstance(observation, DerivedObservation):
+                new_part.product_type = ProductType.AUXILIARY
+
+        for chunk in part.chunks:
+            if new_part.name not in SCIENCE_PARTS and new_part.product_type != ProductType.AUXILIARY:
+                new_part.chunks.append(chunk)
+            # no cutout support for these files, so remove the metadata that indicates that there is
+            chunk.naxis = None
+            chunk.position_axis_1 = None
+            chunk.position_axis_2 = None
+            chunk.time_axis = None
+            chunk.energy_axis = None
+            chunk.polarization_axis = None
+            if (
+                chunk.polarization
+                and chunk.polarization.axis
+                and chunk.polarization.axis.function
+                and chunk.polarization.axis.function.ref_coord
+                and chunk.polarization.axis.function.ref_coord.val == 0.0
+            ):
+                # only some HDUs have polarization data
+                chunk.polarization = None
 
         # add the Chunk metadata to the relevant Part
         if new_part.name in SCIENCE_PARTS:
-            logging.debug(f'Adding Chunk to {new_part.name} Part')
+            logging.error(f'Adding Chunk to {new_part.name} Part')
             primary_chunk = Chunk()
             primary_header = headers[0]
-            wcs_parser = FitsWcsParser(primary_header, obs_id, 0)
-            wcs_parser.augment_temporal(primary_chunk)
-            wcs_parser.augment_position(primary_chunk)
+            wcs_parser = FitsWcsParser(primary_header, observation.observation_id, 0)
+            wcs_parser.augment_temporal(primary_chunk, idx)
+            wcs_parser.augment_position(primary_chunk, idx)
             primary_chunk.position_axis_1 = None
             primary_chunk.position_axis_2 = None
             primary_chunk.time_axis = None
@@ -183,3 +233,33 @@ def _update_artifact(artifact, headers, obs_id):
         artifact.parts.add(part)
 
     logging.debug('End _update_artifact')
+
+
+def _update_simple_groups(observation, plane, headers):
+    logging.debug('Begin _update_simple_groups')
+    if isinstance(observation, SimpleObservation):
+        run_id = headers[0].get('RUNID')
+        if run_id:
+            group = f'ivo://cadc.nrc.ca/gms?CFHT-{run_id}'
+            observation.meta_read_groups.add(group)
+            plane.data_read_groups.add(group)
+            plane.meta_read_groups.add(group)
+    logging.debug('End _update_simple_groups')
+
+
+def update(observation, **kwargs):
+    """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes
+    and CAOM attributes).
+    """
+    logging.debug(f'Begin update for {observation.observation_id}')
+    headers = kwargs.get('headers')
+    uri = kwargs.get('uri')
+    file_info = kwargs.get('file_info')
+    for plane in observation.planes.values():
+        for artifact in plane.artifacts.values():
+            if uri == artifact.uri:
+                update_artifact_meta(artifact, file_info)
+                _update_artifact(artifact, headers, observation)
+                _update_simple_groups(observation, plane, headers)
+    logging.debug('End update')
+    return observation

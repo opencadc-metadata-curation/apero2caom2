@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -101,17 +101,19 @@ class File2caom2Visitor:
 
     def _get_blueprints(self, dest_uri):
         result = []
-        bp_fqn = (
-            f'{self.config.lookup.get("blueprint_directory")}/{self.config.lookup.get("instrument")}_'
-            f'{self.storage_name.product_type.value}.bp'
-        ).lower()
+        bp_fqn = f'{self.config.lookup.get("blueprint_directory")}/{self.storage_name.blueprint_name}'
         self.logger.debug(f'Begin _get_blueprints for {dest_uri} from {bp_fqn} file')
         module_fqn = f'{dirname(bp_fqn)}/{self.config.lookup.get("instrument").lower()}.py'
         self.logger.info(f'Load module {module_fqn}')
         self._load_module(module_fqn)
         blueprint = ObsBlueprint(module=self.module)
         if exists(bp_fqn):
-            blueprint.load_from_file(bp_fqn)
+            try:
+                blueprint.load_from_file(bp_fqn)
+            except Exception as e:
+                self.logger.error(f'Blueprint load failure: {e}')
+                self.logger.debug(traceback.format_exc())
+                raise e
             result.append(blueprint)
         else:
             self.logger.warning(
@@ -124,11 +126,9 @@ class File2caom2Visitor:
     def _get_parser(self, blueprint, uri):
         self.logger.debug('Begin _get_parser')
         headers = self.storage_name.metadata.get(uri)
-        if headers is None or len(headers) == 0:
-            self.logger.debug(f'No headers, using a BlueprintParser for {self.storage_name.file_uri}')
+        if headers is None or len(headers) == 0 or 'no_wcs' in self.storage_name.blueprint_name:
             parser = BlueprintParser(blueprint, uri)
         else:
-            self.logger.debug(f'Using a FitsParser for {self.storage_name.file_uri}')
             parser = FitsParser(headers, blueprint, uri)
         self.logger.debug(f'Created {parser.__class__.__name__} parser for {uri}.')
         return parser
@@ -241,7 +241,7 @@ class File2caom2Visitor:
                         self.logger.debug(tb)
                         raise e
 
-        except Caom2Exception as e:
+        except Exception as e:
             self.logger.debug(traceback.format_exc())
             self.logger.warning(
                 f'CAOM2 record creation failed for {self.storage_name.obs_id}'

@@ -66,6 +66,7 @@
 # ***********************************************************************
 #
 
+from re import search
 from apero2caom2 import APEROName
 
 
@@ -95,37 +96,29 @@ def test_storage_name(test_config):
 
 def test_product_id(test_config):
     for entry in [
-            "ccf_plot_GL699_spirou_offline_udem.png",
-            "ccf_plot_GL699_spirou_offline_udem_256.png",
-            # "debug_effron_plot_GL699_spirou_offline_udem_256.png",
-            # "debug_version_plot_GL699_spirou_offline_udem_256.png",
-            # "debug_extsmax_plot_GL699_spirou_offline_udem.png",
-            # "debug_extsmax_plot_GL699_spirou_offline_udem_256.png",
-            # "debug_wcav000_plot_GL699_spirou_offline_udem.png",
-            # "debug_wcav000_plot_GL699_spirou_offline_udem_256.png ",
-            # "debug_shape_plot_GL699_spirou_offline_udem.png",
-            # "debug_wfpdrift_plot_GL699_spirou_offline_udem.png",
-            # "debug_shape_plot_GL699_spirou_offline_udem_256.png",
-            # "debug_wfpdrift_plot_GL699_spirou_offline_udem_256.png",
-            # "debug_effron_plot_GL699_spirou_offline_udem.png",
-            # "debug_version_plot_GL699_spirou_offline_udem.png",
-            "lbl_GL699_GL699.rdb",
-            "lbl_GL699_GL699_drift.rdb",
-            # "lbl_plot_GL699_GL699_spirou_offline_udem.png",
-            # "lbl_plot_GL699_GL699_spirou_offline_udem_256.png",
-            "lbl2_GL699_GL699.rdb",
-            "lbl2_GL699_GL699_drift.rdb",
-            "spec_plot_GL699_spirou_offline_udem_256.png",
-            "spec_plot_GL699_spirou_offline_udem.png",
-            "Template_s1dw_GL699_sc1d_w_file_AB.fits",
-            "Template_s1dw_GL699_sc1d_w_file_AB.fits.header",
-            "Template_GL699_tellu_obj_AB.fits",
-            "Template_GL699_tellu_obj_AB.fits.header",
-            "Template_s1dv_GL699_sc1d_v_file_AB.fits",
-            "Template_s1dv_GL699_sc1d_v_file_AB.fits.header",
-        ]:
-        import logging
-        logging.error(entry)
+        'APERO_v0.7_SPIROU_2426458e_256.png',
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.fits',
+        'APERO_v0.7_SPIROU_2426458p_256.png',
+        'APERO_v0.7_SPIROU_2426458s_256.png',
+        'APERO_v0.7_SPIROU_2426458t_256.png',
+        'APERO_v0.7_SPIROU_2426458v_256.png',
+        'APERO_v0.7_SPIROU_2426458e.fits',
+        'APERO_v0.7_SPIROU_2426458p.fits',
+        'APERO_v0.7_SPIROU_2426458s.fits',
+        'APERO_v0.7_SPIROU_2426458t.fits',
+        'APERO_v0.7_SPIROU_2426458v.fits',
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.png',
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png',
+        'APERO_v0.7_SPIROU_2426458e.png',
+        'APERO_v0.7_SPIROU_2426458p.png',
+        'APERO_v0.7_SPIROU_2426458s.png',
+        'APERO_v0.7_SPIROU_2426458t.png',
+        'APERO_v0.7_SPIROU_2426458v.png',
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB.fits',
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.fits',
+        'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB.fits',
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits',
+    ]:
         test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
         if entry.startswith('ccf') or entry.startswith('spec') or entry.startswith('debug'):
             assert test_subject.product_id == 'NO_GUIDANCE', f'debug wrong {entry} {test_subject.product_id}'
@@ -137,5 +130,8 @@ def test_product_id(test_config):
             assert test_subject.product_id == 'TELLU_TEMP_S1DV', f's1dv wrong {entry} {test_subject.product_id}'
         elif 'lbl' in entry:
             assert test_subject.product_id.startswith('LBL'), f'lbl wrong {entry} {test_subject.product_id}'
+        elif search('[0-9]{5,7}', entry) is not None:
+            assert test_subject.suffix is not None, f'suffix {entry} {test_subject.product_id}'
+            assert test_subject.product_id.endswith(f'_{test_subject.suffix.upper()}')
         else:
             assert False, f'lost {entry}'

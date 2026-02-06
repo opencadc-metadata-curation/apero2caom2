@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -72,6 +72,7 @@ This module implements the ObsBlueprint mapping.
 
 from datetime import datetime, timedelta
 from os.path import basename
+from re import search
 
 from caom2 import ProductType
 from caom2pipe.execute_composable import (
@@ -105,6 +106,7 @@ class APEROName(CFHTName):
         self._file_uri = None
         self._object = None
         self._instrument_value = instrument
+        self._blueprint_name = None
         try:
             super().__init__(instrument=instrument, source_names=source_names)
         except ValueError as e:
@@ -113,7 +115,34 @@ class APEROName(CFHTName):
             StorageName.__init__(self, source_names=source_names)
 
     def _get_uri(self, file_name, scheme):
-        return f'{scheme}:{self.collection}/{self._instrument_value}/{basename(file_name).replace('.header', '')}'
+        return f'{scheme}:{self.collection}/{self._instrument_value}/{basename(file_name)}'
+
+    @property
+    def blueprint_name(self):
+        # energy in Simple
+        # time in RDB, Template
+        # position in Template
+
+        obs_cardinality = 'derived'
+        if self._product_id.startswith('DRS_POST_'):
+            obs_cardinality = 'simple'
+
+        wcs_axes = 'auxiliary'
+        if self._product_id.startswith('DRS_POST_'):
+            if self._suffix == 'p':
+                wcs_axes = 'polarization_spatial_spectral_temporal'
+            else:
+                wcs_axes = 'spatial_spectral_temporal'
+        elif self._file_name.endswith('.rdb'):
+            wcs_axes = 'temporal'
+        elif '':
+            wcs_axes = 'spectral_temporal'
+        elif 'Template' in self._file_name or self._product_id == 'LBL_FITS':
+            wcs_axes = 'spatial_temporal'
+        else:
+            wcs_axes = 'no_wcs'
+        self._blueprint_name = f'{self._instrument_value.lower()}_{obs_cardinality}_{wcs_axes}.bp'
+        return self._blueprint_name
 
     @property
     def instrument_value(self):
@@ -123,18 +152,6 @@ class APEROName(CFHTName):
     def prev(self):
         """The preview file name for the file."""
         return self._file_name
-
-    @property
-    def product_type(self):
-        result = ProductType.SCIENCE
-        if '.png' in self._file_name:
-            if '256' in self._file_name:
-                result = ProductType.THUMBNAIL
-            else:
-                result = ProductType.PREVIEW
-        elif '.rdb' in self._file_name:
-            result = ProductType.AUXILIARY
-        return result
 
     @property
     def thumb(self):
@@ -151,6 +168,16 @@ class APEROName(CFHTName):
             # for file names that have _flag or _diag in them
             self._suffix = self._file_id.split('_')[0][-1]
 
+    def set_obs_id(self, **kwargs):
+        temp = search('[0-9]{5,7}', self._file_name)
+        if temp:
+            self._suffix = self._file_name[temp.end()]
+        if self._suffix and self._file_id[-1] == self._suffix:
+            self._obs_id = self._file_id[:-1]
+        else:
+            super().set_obs_id(**kwargs)
+
+
     def set_product_id(self, **kwargs):
         # DRS_POST_<suffix>
         # TELLU_TEMP_S1DW
@@ -162,21 +189,24 @@ class APEROName(CFHTName):
         # LBL_RDB2
         # LBL_RDB_DRIFT
         # LBL_RDB2_DRIFT
-
-        if 'lbl_' in self._file_id:
+        self._logger.debug(f'Begin set_product_id {self._file_id}')
+        if '_lbl' in self._file_id:
             if self._file_name.endswith('.rdb'):
                 if '_drift' in self._file_id:
                     self._product_id = 'LBL_RDB_DRIFT'
                 else:
                     self._product_id = 'LBL_RDB'
-            elif self._file_name.endswith('.fits'):
-                self._product_id = 'LBL_RDB_FITS'
-        elif 'lbl2_' in self._file_id and self._file_name.endswith('.rdb'):
+            elif self._file_name.endswith('.fits') or self._file_name.endswith('.png'):
+                if '_tcorr_' in self._file_name:
+                    self._product_id = 'LBL_FITS'
+                else:
+                    self._product_id = 'LBL_RDB_FITS'
+        elif '_lbl2_' in self._file_id and self._file_name.endswith('.rdb'):
             if '_drift' in self._file_id:
                 self._product_id = 'LBL_RDB2_DRIFT'
             else:
                 self._product_id = 'LBL_RDB2'
-        elif 'Template_' in self._file_id:
+        elif '_Template_' in self._file_id:
             if '_s1dw_' in self._file_id:
                 self._product_id = 'TELLU_TEMP_S1DW'
             elif '_s1dv_' in self._file_id:
@@ -184,7 +214,11 @@ class APEROName(CFHTName):
             else:
                 self._product_id = 'TELLU_TEMP'
         else:
-            self._product_id = 'NO_GUIDANCE'
+            if self._suffix:
+                self._product_id = f'DRS_POST_{self._suffix.upper()}'
+            else:
+                self._product_id = 'NO_GUIDANCE'
+        self._logger.debug(f'End set_product_id {self._product_id} for {self._file_name}')
 
     @staticmethod
     def remove_extensions(name):

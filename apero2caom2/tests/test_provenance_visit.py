@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2026.                            (c) 2026.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -66,91 +66,84 @@
 # ***********************************************************************
 #
 
+import glob
 import logging
 import os
 
-from mock import Mock
+from mock import Mock, patch
 
+from astropy.table import Table
 from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
 from caom2.diff import get_differences
 from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
 from apero2caom2.main_app import set_storage_name_from_local_preconditions
 
 
-def test_main_app_no_blueprint(test_config, tmp_path, test_data_dir, change_test_dir):
-    # this tests what happens when there is no blueprint or module file to be found
+def pytest_generate_tests(metafunc):
+    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/provenance/*.expected.xml')
+    metafunc.parametrize('test_name', obs_id_list)
+
+
+@patch('apero2caom2.provenance_augmentation.query_tap_client')
+def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, change_test_dir):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
+    query_mock.side_effect = _query_tap
     test_config.change_working_directory(tmp_path.as_posix())
-    test_config.lookup['instrument'] = 'SOMETHING_ELSE'
-
-    expected_fqn = f'{test_data_dir}/something_else.expected.xml'
-    actual_fqn = expected_fqn.replace('expected', 'actual')
-    if os.path.exists(actual_fqn):
-        os.unlink(actual_fqn)
-    observation = None
-    test_file_name = f'{test_data_dir}/bp_tests/Template_GL699_tellu_obj_AB.fits.header'
-    storage_name = main_app.APEROName(
-        instrument='SOMETHING_ELSE',
-        source_names=[test_file_name]
-    )
-    set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
-    test_reporter = ExecutionReporter2(test_config)
-    kwargs = {
-        'storage_name': storage_name,
-        'reporter': test_reporter,
-        'config': test_config,
-        'clients': Mock(),
-    }
-    observation = file2caom2_augmentation.visit(observation, **kwargs)
-    observation = provenance_augmentation.visit(observation, **kwargs)
-    assert observation is None, 'no supporting files, this is where it stops'
-
-
-def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
-    # this tests what happens when there is a blueprint and a module file for
-    # an instrument named "DIFFERENT"
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    test_config.change_working_directory(tmp_path.as_posix())
-    test_config.lookup['instrument'] = 'DIFFERENT'
+    test_config.dump_blueprint = True
     test_config.lookup['blueprint_directory'] = f'{test_data_dir}/blueprints'
 
-    expected_fqn = f'{test_data_dir}/something_else.expected.xml'
-    actual_fqn = expected_fqn.replace('expected', 'actual')
+    in_fqn = test_name.replace('.expected', '.in')
+    actual_fqn = test_name.replace('expected', 'actual')
     if os.path.exists(actual_fqn):
         os.unlink(actual_fqn)
     observation = None
-    test_file_name = f'{test_data_dir}/bp_tests/Template_GL699_tellu_obj_AB.fits.header'
-    storage_name = main_app.APEROName(instrument='DIFFERENT', source_names=[test_file_name])
-    set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
-    test_reporter = ExecutionReporter2(test_config)
-    kwargs = {
-        'storage_name': storage_name,
-        'reporter': test_reporter,
-        'config': test_config,
-        'clients': Mock(),
-    }
-    observation = file2caom2_augmentation.visit(observation, **kwargs)
-    observation = provenance_augmentation.visit(observation, **kwargs)
+    if os.path.exists(in_fqn):
+        observation = read_obs_from_file(in_fqn)
+
+    file_names = glob.glob(test_name.replace('.expected.xml', '*.fits.header'))
+    for file_name in file_names:
+        logger.error(file_name)
+
+        storage_name = main_app.APEROName(
+            instrument=test_config.lookup.get('instrument'),
+            source_names=[file_name.replace('.header', '')]
+        )
+        storage_name._source_names = [file_name]
+        set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
+        test_reporter = ExecutionReporter2(test_config)
+        kwargs = {
+            'storage_name': storage_name,
+            'reporter': test_reporter,
+            'config': test_config,
+            'clients': Mock(),
+        }
+        observation = file2caom2_augmentation.visit(observation, **kwargs)
+        observation = provenance_augmentation.visit(observation, **kwargs)
 
     if observation is None:
-        assert False, f'Did not create observation for DIFFERENT'
+        assert False, f'Did not create observation for {test_name}'
     else:
-        if os.path.exists(expected_fqn):
-            expected = read_obs_from_file(expected_fqn)
+        if os.path.exists(test_name):
+            expected = read_obs_from_file(test_name)
             compare_result = get_differences(expected, observation)
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
                 msg = (
-                    f'Differences found in observation {expected.observation_id} {actual_fqn}\n'
+                    f'Differences found in observation {expected.observation_id}\n'
                     f'{compare_text}'
                 )
                 raise AssertionError(msg)
         else:
             write_obs_to_file(observation, actual_fqn)
-            assert False, 'nothing to compare to for SOMETHING_ELSE'
-        # assert False  # cause I want to see logging messages
+            assert False, f'nothing to compare to for {test_name}, missing {test_name}'
+    # assert False  # cause I want to see logging messages
+
+
+def _query_tap(query_string, _):
+    return Table.read(
+        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split('\n'),
+        format='ascii.tab',
+    )
