@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -135,3 +135,6 @@ def test_product_id(test_config):
             assert test_subject.product_id.endswith(f'_{test_subject.suffix.upper()}')
         else:
             assert False, f'lost {entry}'
+
+        if entry in ['APERO_v0.7_SPIROU_2426458v_256.png', 'APERO_v0.7_SPIROU_2426458v.png']:
+            assert test_subject.blueprint_name == 'spirou_simple_no_wcs.bp', f'blueprint {entry}'

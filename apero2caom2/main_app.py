@@ -128,15 +128,16 @@ class APEROName(CFHTName):
             obs_cardinality = 'simple'
 
         wcs_axes = 'auxiliary'
-        if self._product_id.startswith('DRS_POST_'):
-            if self._suffix == 'p':
-                wcs_axes = 'polarization_spatial_spectral_temporal'
+        if obs_cardinality == 'simple':
+            if self._file_name.endswith('.png'):
+                wcs_axes = 'no_wcs'
             else:
-                wcs_axes = 'spatial_spectral_temporal'
+                if self._suffix == 'p':
+                    wcs_axes = 'polarization_spatial_spectral_temporal'
+                else:
+                    wcs_axes = 'spatial_spectral_temporal'
         elif self._file_name.endswith('.rdb'):
             wcs_axes = 'temporal'
-        elif '':
-            wcs_axes = 'spectral_temporal'
         elif 'Template' in self._file_name or self._product_id == 'LBL_FITS':
             wcs_axes = 'spatial_temporal'
         else:
