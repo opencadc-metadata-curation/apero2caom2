@@ -173,8 +173,12 @@ class APEROName(CFHTName):
         temp = search('[0-9]{5,7}', self._file_name)
         if temp:
             self._suffix = self._file_name[temp.end()]
-        if self._suffix and self._file_id[-1] == self._suffix:
-            self._obs_id = self._file_id[:-1]
+        if self._suffix:
+            self._logger.error(self._file_name)
+            if self._file_name.endswith('.png'):
+                self._obs_id = self._file_id.replace('.png', '').replace('_256', '')[:-1]
+            else:
+                self._obs_id = self._file_id[:-1]
         else:
             super().set_obs_id(**kwargs)
 

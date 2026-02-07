@@ -138,3 +138,4 @@ def test_product_id(test_config):
 
         if entry in ['APERO_v0.7_SPIROU_2426458v_256.png', 'APERO_v0.7_SPIROU_2426458v.png']:
             assert test_subject.blueprint_name == 'spirou_simple_no_wcs.bp', f'blueprint {entry}'
+            assert test_subject.obs_id == 'APERO_v0.7_SPIROU_2426458', f'obs_id {entry}'
