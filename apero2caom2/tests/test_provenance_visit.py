@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -107,8 +107,7 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
         logger.error(file_name)
 
         storage_name = main_app.APEROName(
-            instrument=test_config.lookup.get('instrument'),
-            source_names=[file_name.replace('.header', '')]
+            instrument=test_config.lookup.get('instrument'), source_names=[file_name.replace('.header', '')]
         )
         storage_name._source_names = [file_name]
         set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
@@ -131,10 +130,7 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
-                msg = (
-                    f'Differences found in observation {expected.observation_id}\n'
-                    f'{compare_text}'
-                )
+                msg = f'Differences found in observation {expected.observation_id}\n{compare_text}'
                 raise AssertionError(msg)
         else:
             write_obs_to_file(observation, actual_fqn)
@@ -144,6 +140,8 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
 
 def _query_tap(query_string, _):
     return Table.read(
-        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split('\n'),
+        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split(
+            '\n'
+        ),
         format='ascii.tab',
     )

@@ -110,8 +110,7 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
         if test_file_name.endswith('.fits') or '.xml' in test_file_name:
             continue
         storage_name = main_app.APEROName(
-            instrument=test_config.lookup.get('instrument'),
-            source_names=[test_file_name]
+            instrument=test_config.lookup.get('instrument'), source_names=[test_file_name]
         )
         set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
         test_reporter = ExecutionReporter2(test_config)
@@ -133,10 +132,7 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
-                msg = (
-                    f'Differences found in observation {expected.observation_id}\n'
-                    f'{compare_text}'
-                )
+                msg = f'Differences found in observation {expected.observation_id}\n' f'{compare_text}'
                 raise AssertionError(msg)
         else:
             write_obs_to_file(observation, actual_fqn)
@@ -146,6 +142,8 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
 
 def _query_tap(query_string, _):
     return Table.read(
-        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split('\n'),
+        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split(
+            '\n'
+        ),
         format='ascii.tab',
     )

@@ -104,8 +104,7 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
         observation = read_obs_from_file(in_fqn)
 
     storage_name = main_app.APEROName(
-        instrument=test_config.lookup.get('instrument'),
-        source_names=[test_file_name.replace('.header', '')]
+        instrument=test_config.lookup.get('instrument'), source_names=[test_file_name.replace('.header', '')]
     )
     storage_name._source_names = [test_file_name]
     set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
@@ -128,10 +127,7 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
-                msg = (
-                    f'Differences found in observation {expected.observation_id}\n'
-                    f'{compare_text}'
-                )
+                msg = f'Differences found in observation {expected.observation_id}\n' f'{compare_text}'
                 raise AssertionError(msg)
         else:
             write_obs_to_file(observation, actual_fqn)
@@ -141,6 +137,8 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
 
 def _query_tap(query_string, _):
     return Table.read(
-        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split('\n'),
+        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split(
+            '\n'
+        ),
         format='ascii.tab',
     )

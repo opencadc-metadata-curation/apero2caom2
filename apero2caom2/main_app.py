@@ -122,26 +122,20 @@ class APEROName(CFHTName):
         # energy in Simple
         # time in RDB, Template
         # position in Template
-
         obs_cardinality = 'derived'
         if self._product_id.startswith('DRS_POST_'):
             obs_cardinality = 'simple'
-
-        wcs_axes = 'auxiliary'
-        if obs_cardinality == 'simple':
-            if self._file_name.endswith('.png'):
-                wcs_axes = 'no_wcs'
-            else:
+        if self._file_name.endswith('.png') or self._file_name.endswith('.rdb'):
+            wcs_axes = 'no_wcs'
+        else:
+            wcs_axes = 'no_wcs'
+            if obs_cardinality == 'simple':
                 if self._suffix == 'p':
                     wcs_axes = 'polarization_spatial_spectral_temporal'
                 else:
                     wcs_axes = 'spatial_spectral_temporal'
-        elif self._file_name.endswith('.rdb'):
-            wcs_axes = 'temporal'
-        elif 'Template' in self._file_name or self._product_id == 'LBL_FITS':
-            wcs_axes = 'spatial_temporal'
-        else:
-            wcs_axes = 'no_wcs'
+            else:
+                wcs_axes = 'spatial_temporal'
         self._blueprint_name = f'{self._instrument_value.lower()}_{obs_cardinality}_{wcs_axes}.bp'
         return self._blueprint_name
 
@@ -184,7 +178,6 @@ class APEROName(CFHTName):
         else:
             super().set_obs_id(**kwargs)
 
-
     def set_product_id(self, **kwargs):
         # DRS_POST_<suffix>
         # TELLU_TEMP_S1DW
@@ -197,7 +190,7 @@ class APEROName(CFHTName):
         # LBL_RDB_DRIFT
         # LBL_RDB2_DRIFT
         self._logger.debug(f'Begin set_product_id {self._file_id}')
-        if '_lbl' in self._file_id:
+        if '_lbl' in self._file_id and '_lbl2' not in self._file_id:
             if self._file_name.endswith('.rdb'):
                 if '_drift' in self._file_id:
                     self._product_id = 'LBL_RDB_DRIFT'
@@ -208,7 +201,7 @@ class APEROName(CFHTName):
                     self._product_id = 'LBL_FITS'
                 else:
                     self._product_id = 'LBL_RDB_FITS'
-        elif '_lbl2_' in self._file_id and self._file_name.endswith('.rdb'):
+        elif '_lbl2' in self._file_id and self._file_name.endswith('.rdb'):
             if '_drift' in self._file_id:
                 self._product_id = 'LBL_RDB2_DRIFT'
             else:

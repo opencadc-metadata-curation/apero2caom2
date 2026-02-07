@@ -97,6 +97,7 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     except Exception as e:
         import traceback
         import logging
+
         logging.error(traceback.format_exc())
         assert False, e
 
@@ -113,7 +114,7 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
 @patch('apero2caom2.data_source.APEROLocalFilesDataSource._initialize_end_dt')
 @patch(
     'apero2caom2.data_source.APEROLocalFilesDataSource.end_dt',
-    new_callable=PropertyMock(return_value=datetime(year=2025, month=11, day=1, hour=10, minute=5))
+    new_callable=PropertyMock(return_value=datetime(year=2025, month=11, day=1, hour=10, minute=5)),
 )
 @patch('apero2caom2.file2caom2_augmentation.visit')
 @patch('apero2caom2.data_source.check_fitsverify')

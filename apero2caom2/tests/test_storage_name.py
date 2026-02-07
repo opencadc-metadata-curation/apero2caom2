@@ -89,63 +89,112 @@ def test_storage_name(test_config):
         ]
     ):
         test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
-        assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
+        assert test_subject.file_id == test_f_name.replace('.fits', '').replace(
+            '.header', ''
+        ), f'wrong file id {index}'
         assert test_subject.file_uri == test_uri, f'wrong uri {index}'
         assert test_subject.source_names == [entry], f'wrong source names {index}'
 
 
 def test_product_id(test_config):
-    for entry in [
-        'APERO_v0.7_SPIROU_2426458e_256.png',
-        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.fits',
-        'APERO_v0.7_SPIROU_2426458p_256.png',
-        'APERO_v0.7_SPIROU_2426458s_256.png',
-        'APERO_v0.7_SPIROU_2426458t_256.png',
-        'APERO_v0.7_SPIROU_2426458v_256.png',
-        'APERO_v0.7_SPIROU_2426458e.fits',
-        'APERO_v0.7_SPIROU_2426458p.fits',
-        'APERO_v0.7_SPIROU_2426458s.fits',
-        'APERO_v0.7_SPIROU_2426458t.fits',
-        'APERO_v0.7_SPIROU_2426458v.fits',
-        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.png',
-        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png',
-        'APERO_v0.7_SPIROU_2426458e.png',
-        'APERO_v0.7_SPIROU_2426458p.png',
-        'APERO_v0.7_SPIROU_2426458s.png',
-        'APERO_v0.7_SPIROU_2426458t.png',
-        'APERO_v0.7_SPIROU_2426458v.png',
-        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB.fits',
-        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.fits',
-        'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB.fits',
-        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits',
-    ]:
-        test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
-        if entry.startswith('ccf') or entry.startswith('spec') or entry.startswith('debug'):
-            assert test_subject.product_id == 'NO_GUIDANCE', f'debug wrong {entry} {test_subject.product_id}'
-        elif '_tellu_' in entry:
-            assert test_subject.product_id == 'TELLU_TEMP', f'telluric wrong {entry} {test_subject.product_id}'
-        elif '_s1dw_' in entry:
-            assert test_subject.product_id == 'TELLU_TEMP_S1DW', f's1dw wrong {entry} {test_subject.product_id}'
-        elif '_s1dv_' in entry:
-            assert test_subject.product_id == 'TELLU_TEMP_S1DV', f's1dv wrong {entry} {test_subject.product_id}'
-        elif 'lbl' in entry:
-            assert test_subject.product_id.startswith('LBL'), f'lbl wrong {entry} {test_subject.product_id}'
-        elif search('[0-9]{5,7}', entry) is not None:
-            assert test_subject.suffix is not None, f'suffix {entry} {test_subject.product_id}'
-            assert test_subject.product_id.endswith(f'_{test_subject.suffix.upper()}')
-        else:
-            assert False, f'lost {entry}'
-
-        if entry in [
-            'APERO_v0.7_SPIROU_2426458v_256.png',
-            'APERO_v0.7_SPIROU_2426458v.png',
-            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png',
-        ]:
-            if 'tcorr' in entry:
-                assert (
-                    test_subject.obs_id == 'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl'
-                ), f'obs_id {entry} {test_subject.obs_id}'
-                assert test_subject.blueprint_name == 'spirou_derived_spatial_temporal.bp', f'blueprint {entry}'
-            else:
-                assert test_subject.obs_id == 'APERO_v0.7_SPIROU_2426458', f'obs_id {entry}'
-                assert test_subject.blueprint_name == 'spirou_simple_no_wcs.bp', f'blueprint {entry}'
+    for key, value in {
+        'APERO_v0.7_SPIROU_2426458e_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_E', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.fits': [
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
+            'LBL_FITS',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458p_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_P', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458s_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_S', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458t_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_T', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458v_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_V', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458e.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_E',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458p.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_P',
+            'spirou_simple_polarization_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458s.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_S',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458t.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_T',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458v.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_V',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.png': [
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
+            'LBL_FITS',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png': [
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
+            'LBL_FITS',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458e.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_E', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458p.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_P', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458s.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_S', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458t.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_T', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458v.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_V', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB.fits': [
+            'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB',
+            'TELLU_TEMP',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.fits': [
+            'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
+            'TELLU_TEMP_S1DV',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB.fits': [
+            'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB',
+            'TELLU_TEMP_S1DW',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
+            'LBL_RDB_FITS',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
+            'LBL_RDB_FITS',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.rdb': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
+            'LBL_RDB',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699.rdb': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699',
+            'LBL_RDB2',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699_drift.rdb': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699_drift',
+            'LBL_RDB_DRIFT',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699_drift.rdb': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699_drift',
+            'LBL_RDB2_DRIFT',
+            'spirou_derived_no_wcs.bp',
+        ],
+    }.items():
+        test_subject = APEROName(test_config.lookup.get('instrument'), [key])
+        assert test_subject.obs_id == value[0], f'obs_id key {key} value {value[0]}'
+        assert test_subject.product_id == value[1], f'product_id key {key} value {value[1]}'
+        assert test_subject.blueprint_name == value[2], f'blueprint name key {key} value {value[2]}'

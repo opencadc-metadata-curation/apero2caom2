@@ -91,10 +91,7 @@ def test_main_app_no_blueprint(test_config, tmp_path, test_data_dir, change_test
         os.unlink(actual_fqn)
     observation = None
     test_file_name = f'{test_data_dir}/bp_tests/Template_GL699_tellu_obj_AB.fits.header'
-    storage_name = main_app.APEROName(
-        instrument='SOMETHING_ELSE',
-        source_names=[test_file_name]
-    )
+    storage_name = main_app.APEROName(instrument='SOMETHING_ELSE', source_names=[test_file_name])
     set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
     test_reporter = ExecutionReporter2(test_config)
     kwargs = {
@@ -145,10 +142,7 @@ def test_main_app(test_config, tmp_path, test_data_dir, change_test_dir):
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
-                msg = (
-                    f'Differences found in observation {expected.observation_id} {actual_fqn}\n'
-                    f'{compare_text}'
-                )
+                msg = f'Differences found in observation {expected.observation_id} {actual_fqn}\n{compare_text}'
                 raise AssertionError(msg)
         else:
             write_obs_to_file(observation, actual_fqn)
