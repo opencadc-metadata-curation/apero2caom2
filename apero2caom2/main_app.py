@@ -170,15 +170,17 @@ class APEROName(CFHTName):
             self._suffix = self._file_id.split('_')[0][-1]
 
     def set_obs_id(self, **kwargs):
+        # tcorr files have suffixes, and they're not in the correct position
         temp = search('[0-9]{5,7}', self._file_name)
         if temp:
             self._suffix = self._file_name[temp.end()]
-        if self._suffix:
-            self._logger.error(self._file_name)
-            if self._file_name.endswith('.png'):
-                self._obs_id = self._file_id.replace('.png', '').replace('_256', '')[:-1]
+        if self._file_name.endswith('.png'):
+            if 'tcorr' in self._file_name:
+                self._obs_id = self._file_id.replace('.png', '').replace('_256', '')
             else:
-                self._obs_id = self._file_id[:-1]
+                self._obs_id = self._file_id.replace('.png', '').replace('_256', '')[:-1]
+        elif self._suffix and self._file_id[-1] == self._suffix:
+            self._obs_id = self._file_id[:-1]
         else:
             super().set_obs_id(**kwargs)
 

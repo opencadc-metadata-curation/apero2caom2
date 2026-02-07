@@ -136,6 +136,16 @@ def test_product_id(test_config):
         else:
             assert False, f'lost {entry}'
 
-        if entry in ['APERO_v0.7_SPIROU_2426458v_256.png', 'APERO_v0.7_SPIROU_2426458v.png']:
-            assert test_subject.blueprint_name == 'spirou_simple_no_wcs.bp', f'blueprint {entry}'
-            assert test_subject.obs_id == 'APERO_v0.7_SPIROU_2426458', f'obs_id {entry}'
+        if entry in [
+            'APERO_v0.7_SPIROU_2426458v_256.png',
+            'APERO_v0.7_SPIROU_2426458v.png',
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png',
+        ]:
+            if 'tcorr' in entry:
+                assert (
+                    test_subject.obs_id == 'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl'
+                ), f'obs_id {entry} {test_subject.obs_id}'
+                assert test_subject.blueprint_name == 'spirou_derived_spatial_temporal.bp', f'blueprint {entry}'
+            else:
+                assert test_subject.obs_id == 'APERO_v0.7_SPIROU_2426458', f'obs_id {entry}'
+                assert test_subject.blueprint_name == 'spirou_simple_no_wcs.bp', f'blueprint {entry}'
