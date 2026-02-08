@@ -168,15 +168,14 @@ class APEROName(CFHTName):
         temp = search('[0-9]{5,7}', self._file_name)
         if temp:
             self._suffix = self._file_name[temp.end()]
+
+        temp_file_id = self._file_id
         if self._file_name.endswith('.png'):
-            if 'tcorr' in self._file_name:
-                self._obs_id = self._file_id.replace('.png', '').replace('_256', '')
-            else:
-                self._obs_id = self._file_id.replace('.png', '').replace('_256', '')[:-1]
-        elif self._suffix and self._file_id[-1] == self._suffix:
-            self._obs_id = self._file_id[:-1]
+            temp_file_id = self._file_id.replace('.png', '').replace('_256', '')
+        if self._suffix and temp_file_id[-1] == self._suffix:
+            self._obs_id = temp_file_id[:-1]
         else:
-            super().set_obs_id(**kwargs)
+            self._obs_id = temp_file_id
 
     def set_product_id(self, **kwargs):
         # DRS_POST_<suffix>
@@ -190,31 +189,35 @@ class APEROName(CFHTName):
         # LBL_RDB_DRIFT
         # LBL_RDB2_DRIFT
         self._logger.debug(f'Begin set_product_id {self._file_id}')
-        if '_lbl' in self._file_id and '_lbl2' not in self._file_id:
-            if self._file_name.endswith('.rdb'):
-                if '_drift' in self._file_id:
-                    self._product_id = 'LBL_RDB_DRIFT'
-                else:
-                    self._product_id = 'LBL_RDB'
-            elif self._file_name.endswith('.fits') or self._file_name.endswith('.png'):
-                if '_tcorr_' in self._file_name:
-                    self._product_id = 'LBL_FITS'
-                else:
-                    self._product_id = 'LBL_RDB_FITS'
-        elif '_lbl2' in self._file_id and self._file_name.endswith('.rdb'):
-            if '_drift' in self._file_id:
-                self._product_id = 'LBL_RDB2_DRIFT'
-            else:
-                self._product_id = 'LBL_RDB2'
-        elif '_Template_' in self._file_id:
+        if '_Template_' in self._file_id:
             if '_s1dw_' in self._file_id:
                 self._product_id = 'TELLU_TEMP_S1DW'
             elif '_s1dv_' in self._file_id:
                 self._product_id = 'TELLU_TEMP_S1DV'
             else:
                 self._product_id = 'TELLU_TEMP'
+        elif '_lbl2' in self._file_id:
+            if '_drift' in self._file_id:
+                self._product_id = 'LBL_RDB2_DRIFT'
+            else:
+                self._product_id = 'LBL_RDB2'
+            if self._file_name.endswith('.fits'):
+                self._product_id = self._product_id.replace('RDB2', 'FITS')
+        elif '_lbl' in self._file_id:
+            if '_drift' in self._file_id:
+                self._product_id = 'LBL_RDB_DRIFT'
+            else:
+                self._product_id = 'LBL_RDB'
+            if (
+                self._file_name.endswith('lbl.fits')
+                or self._file_name.endswith('lbl.png')
+                or self._file_name.endswith('lbl_256.png')
+            ):
+                self._product_id = 'LBL_FITS'
+            elif self._file_name.endswith('.fits') or self._file_name.endswith('.png'):
+                self._product_id = f'{self._product_id}_FITS'
         else:
-            if self._suffix:
+            if self._suffix and len(self._file_name.split('_')) in [4, 5]:
                 self._product_id = f'DRS_POST_{self._suffix.upper()}'
             else:
                 self._product_id = 'NO_GUIDANCE'

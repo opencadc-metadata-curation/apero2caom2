@@ -153,10 +153,30 @@ def test_product_id(test_config):
             'TELLU_TEMP',
             'spirou_derived_spatial_temporal.bp',
         ],
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB.png': [
+            'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB',
+            'TELLU_TEMP',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB_256.png': [
+            'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB',
+            'TELLU_TEMP',
+            'spirou_derived_no_wcs.bp',
+        ],
         'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.fits': [
             'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
             'TELLU_TEMP_S1DV',
             'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.png': [
+            'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
+            'TELLU_TEMP_S1DV',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB_256.png': [
+            'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
+            'TELLU_TEMP_S1DV',
+            'spirou_derived_no_wcs.bp',
         ],
         'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB.fits': [
             'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB',
@@ -191,6 +211,16 @@ def test_product_id(test_config):
         'APERO_v0.7_SPIROU_lbl2_GL699_GL699_drift.rdb': [
             'APERO_v0.7_SPIROU_lbl2_GL699_GL699_drift',
             'LBL_RDB2_DRIFT',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699_256.png': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699',
+            'LBL_RDB2',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699.png': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699',
+            'LBL_RDB2',
             'spirou_derived_no_wcs.bp',
         ],
     }.items():
