@@ -22,8 +22,8 @@
   <caom2:targetPosition>
     <caom2:coordsys>FK5</caom2:coordsys>
     <caom2:coordinates>
-      <caom2:cval1>269.4485025</caom2:cval1>
-      <caom2:cval2>4.739420051</caom2:cval2>
+      <caom2:cval1>269.4477916666666</caom2:cval1>
+      <caom2:cval2>4.748861111111111</caom2:cval2>
     </caom2:coordinates>
   </caom2:targetPosition>
   <caom2:telescope>
@@ -75,10 +75,67 @@
           <caom2:contentLength>78505</caom2:contentLength>
           <caom2:contentChecksum>md5:68a00dbc2f18cde378c8dd23b03a0668</caom2:contentChecksum>
           <caom2:parts>
-            <caom2:part caom2:id="a4719477-e461-4e70-b1d4-f5ced07f5118">
+            <caom2:part caom2:id="c31c3329-45be-477d-8320-b70fc18586db">
               <caom2:name>0</caom2:name>
-              <caom2:productType>auxiliary</caom2:productType>
               <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="5639e175-ee59-4936-b9ab-8eb95293c121">
+              <caom2:name>1</caom2:name>
+              <caom2:chunks>
+                <caom2:chunk caom2:id="118bd879-dee5-4425-9028-53197bda1573" caom2:metaProducer="apero2caom2/0.1.0">
+                  <caom2:position>
+                    <caom2:axis>
+                      <caom2:axis1>
+                        <caom2:ctype>RA---TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis1>
+                      <caom2:axis2>
+                        <caom2:ctype>DEC--TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis2>
+                      <caom2:function>
+                        <caom2:dimension>
+                          <caom2:naxis1>1</caom2:naxis1>
+                          <caom2:naxis2>1</caom2:naxis2>
+                        </caom2:dimension>
+                        <caom2:refCoord>
+                          <caom2:coord1>
+                            <caom2:pix>0.5</caom2:pix>
+                            <caom2:val>269.4477916666666</caom2:val>
+                          </caom2:coord1>
+                          <caom2:coord2>
+                            <caom2:pix>0.5</caom2:pix>
+                            <caom2:val>4.748861111111111</caom2:val>
+                          </caom2:coord2>
+                        </caom2:refCoord>
+                        <caom2:cd11>-0.00035833</caom2:cd11>
+                        <caom2:cd12>0.0</caom2:cd12>
+                        <caom2:cd21>0.0</caom2:cd21>
+                        <caom2:cd22>0.00035833</caom2:cd22>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:coordsys>ICRS</caom2:coordsys>
+                  </caom2:position>
+                  <caom2:time>
+                    <caom2:axis>
+                      <caom2:axis>
+                        <caom2:ctype>TIME</caom2:ctype>
+                        <caom2:cunit>d</caom2:cunit>
+                      </caom2:axis>
+                      <caom2:function>
+                        <caom2:naxis>1</caom2:naxis>
+                        <caom2:delta>6.44898148148148e-05</caom2:delta>
+                        <caom2:refCoord>
+                          <caom2:pix>0.5</caom2:pix>
+                          <caom2:val>58588.61392180671</caom2:val>
+                        </caom2:refCoord>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:timesys>UTC</caom2:timesys>
+                    <caom2:resolution>5.57192</caom2:resolution>
+                  </caom2:time>
+                </caom2:chunk>
+              </caom2:chunks>
             </caom2:part>
           </caom2:parts>
         </caom2:artifact>

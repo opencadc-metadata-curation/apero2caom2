@@ -102,7 +102,7 @@ class File2caom2Visitor:
     def _get_blueprints(self, dest_uri):
         result = []
         bp_fqn = f'{self.config.lookup.get("blueprint_directory")}/{self.storage_name.blueprint_name}'
-        self.logger.debug(f'Begin _get_blueprints for {dest_uri} from {bp_fqn} file')
+        self.logger.info(f'Begin _get_blueprints for {dest_uri} from {bp_fqn} file')
         module_fqn = f'{dirname(bp_fqn)}/{self.config.lookup.get("instrument").lower()}.py'
         self.logger.info(f'Load module {module_fqn}')
         self._load_module(module_fqn)

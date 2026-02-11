@@ -101,14 +101,8 @@ def _get_algorithm_name(parameter):
 
 
 def _get_dec(parameter):
-    result = None
-    header = parameter.get('header')
-    objra = header.get('OBJRA')
-    objdec = header.get('OBJDEC')
-    if objra and objdec:
-        _, dec = build_ra_dec_as_deg(objra, objdec, frame='fk5')
-        result = dec
-    return result
+    _, dec = _get_spatial(parameter)
+    return dec
 
 
 def _get_polarization_function_val(parameter):
@@ -129,7 +123,7 @@ def _get_polarization_function_val(parameter):
 def _get_product_id(parameter):
     header = parameter.get('header')
     uri = parameter.get('uri')
-    result = header.get('RUNID')
+    result = header.get('RUNID') if header else None
     if not result:
         result = uri.split()[-1]
     return result
@@ -149,14 +143,22 @@ def _get_product_type(parameter):
 
 
 def _get_ra(parameter):
-    result = None
+    ra, _ = _get_spatial(parameter)
+    return ra
+
+
+def _get_spatial(parameter):
+    ra = None
+    dec = None
     header = parameter.get('header')
     objra = header.get('OBJRA')
     objdec = header.get('OBJDEC')
     if objra and objdec:
-        ra, _ = build_ra_dec_as_deg(objra, objdec, frame='fk5')
-        result = ra
-    return result
+        ra, dec = build_ra_dec_as_deg(objra, objdec, frame='fk5')
+    else:
+        ra = header.get('PP_RA')
+        dec = header.get('PP_DEC')
+    return ra, dec
 
 
 def _get_time_function_delta(header):
@@ -167,9 +169,50 @@ def _get_time_function_delta(header):
     return result
 
 
-def _update_artifact(artifact, headers, observation):
+def _get_time_function_val(parameter):
+    header = parameter.get('header')
+    return header.get('MJDMID')
+
+
+def _get_time_resolution(parameter):
+    header = parameter.get('header')
+    return header.get('FRMTIME')
+
+
+def _update_artifact(artifact, headers, observation, plane):
+    logging.debug(f'Begin _udpate_artifact for {artifact.uri}')
+    if plane.product_id == 'LBL_RDB_FITS':
+        # remove all the parts - there is no metadata useful for CAOM in the headers for this file
+        while len(artifact.parts) > 0:
+            artifact.parts.popitem(0)
+        return
+    extname = headers[0].get('EXTNAME')
+    if extname is None and len(headers) > 1:
+        extname = headers[1].get('EXTNAME')
+    if extname is not None:
+        _update_artifact_rename_parts(artifact, headers, observation)
+    else:
+        _update_artifact_remove_cutout_metadata(artifact)
+    logging.debug('End _udpate_artifact')
+
+
+def _update_artifact_remove_cutout_metadata(artifact):
+    logging.debug(f'Begin _update_artifact_remove_cutout_metadata {artifact.uri}')
+    # no cutout support for these files, so remove the metadata that indicates that there is
+    for part in artifact.parts.values():
+        for chunk in part.chunks:
+            chunk.naxis = None
+            chunk.position_axis_1 = None
+            chunk.position_axis_2 = None
+            chunk.time_axis = None
+            chunk.energy_axis = None
+            chunk.polarization_axis = None
+    logging.debug('End _update_artifact_remove_cutout_metadata')
+
+
+def _update_artifact_rename_parts(artifact, headers, observation):
     # over-ride default part names with the extension names, and set the ProductTypes accordingly
-    logging.debug(f'Begin _update_artifact {artifact.uri}')
+    logging.debug(f'Begin _update_artifact_rename_parts {artifact.uri}')
     # a Part instance in parts is immutable, so changing the name requires removing old parts, and adding new parts
     SCIENCE_PARTS = ['TELLU_TEMP_S1DW', 'TELLU_TEMP_S1DV', 'TELLU_TEMP']
     new_parts = []
@@ -213,7 +256,7 @@ def _update_artifact(artifact, headers, observation):
 
         # add the Chunk metadata to the relevant Part
         if new_part.name in SCIENCE_PARTS:
-            logging.error(f'Adding Chunk to {new_part.name} Part')
+            logging.info(f'Adding Chunk to {new_part.name} Part')
             primary_chunk = Chunk()
             primary_header = headers[0]
             wcs_parser = FitsWcsParser(primary_header, observation.observation_id, 0)
@@ -232,13 +275,13 @@ def _update_artifact(artifact, headers, observation):
     for part in new_parts:
         artifact.parts.add(part)
 
-    logging.debug('End _update_artifact')
+    logging.debug('End _update_artifact_rename_parts')
 
 
 def _update_simple_groups(observation, plane, headers):
     logging.debug('Begin _update_simple_groups')
     if isinstance(observation, SimpleObservation):
-        run_id = headers[0].get('RUNID')
+        run_id = headers[0].get('RUNID') if headers else None
         if run_id:
             group = f'ivo://cadc.nrc.ca/gms?CFHT-{run_id}'
             observation.meta_read_groups.add(group)
@@ -259,7 +302,7 @@ def update(observation, **kwargs):
         for artifact in plane.artifacts.values():
             if uri == artifact.uri:
                 update_artifact_meta(artifact, file_info)
-                _update_artifact(artifact, headers, observation)
+                _update_artifact(artifact, headers, observation, plane)
                 _update_simple_groups(observation, plane, headers)
     logging.debug('End update')
     return observation
