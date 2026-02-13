@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -157,7 +157,14 @@ class APEROProvenanceVisitor:
                         result = query_tap_client(qs, self.clients.query_client)
                         if len(result) > 0:
                             for entry in result:
-                                prov_proposal_id = entry['proposal_id']
+                                temp_proposal_id = entry['proposal_id']
+                                if (
+                                    prov_proposal_id and len(prov_proposal_id) < 128 and temp_proposal_id not in prov_proposal_id
+                                ):
+                                    prov_proposal_id = f'{prov_proposal_id};{temp_proposal_id}'
+                                else:
+                                    prov_proposal_id = temp_proposal_id
+                                
                                 prov_data_release = entry['dataRelease']
                                 prov_meta_release = entry['metaRelease']
 
@@ -203,6 +210,8 @@ class APEROProvenanceVisitor:
                 self.observation.meta_read_groups.add(group)
 
         if prov_proposal_id and pi_name:
+            if self.observation.proposal and len(pi_name) < 128 and self.observation.proposal.pi_name not in pi_name:
+                pi_name = f'{pi_name};{self.observation.proposal.pi_name}'
             self.observation.proposal = Proposal(id=prov_proposal_id, pi_name=pi_name)
         return self.observation
 
