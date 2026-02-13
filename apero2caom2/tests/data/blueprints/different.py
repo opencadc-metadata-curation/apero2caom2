@@ -66,84 +66,20 @@
 # ***********************************************************************
 #
 
-import glob
 import logging
-import os
-
-from mock import Mock, patch
-from pytest import skip
-
-from astropy.table import Table
-from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
-from caom2.diff import get_differences
-from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
-from apero2caom2.main_app import set_storage_name_from_local_preconditions
+from caom2utils.caom2blueprint import update_artifact_meta
 
 
-def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/**/*.expected.xml')
-    metafunc.parametrize('test_name', obs_id_list)
-
-
-@skip(allow_module_level=True)
-@patch('apero2caom2.provenance_augmentation.query_tap_client')
-def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir):
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    query_mock.side_effect = _query_tap
-    test_config.change_working_directory(tmp_path.as_posix())
-    test_config.dump_blueprint = True
-
-    test_working_dir = os.path.dirname(test_name)
-    test_file_list = glob.glob(f'{test_working_dir}/*')
-
-    in_fqn = test_name.replace('.expected', '.in')
-    actual_fqn = test_name.replace('expected', 'actual')
-    if os.path.exists(actual_fqn):
-        os.unlink(actual_fqn)
-    observation = None
-    if os.path.exists(in_fqn):
-        observation = read_obs_from_file(in_fqn)
-
-    for test_file_name in test_file_list:
-        if test_file_name.endswith('.fits') or '.xml' in test_file_name:
-            continue
-        storage_name = main_app.APEROName(
-            instrument=test_config.lookup.get('instrument'), source_names=[test_file_name]
-        )
-        set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
-        test_reporter = ExecutionReporter2(test_config)
-        kwargs = {
-            'storage_name': storage_name,
-            'reporter': test_reporter,
-            'config': test_config,
-            'clients': Mock(),
-        }
-        observation = file2caom2_augmentation.visit(observation, **kwargs)
-        observation = provenance_augmentation.visit(observation, **kwargs)
-
-    if observation is None:
-        assert False, f'Did not create observation for {test_name}'
-    else:
-        if os.path.exists(test_name):
-            expected = read_obs_from_file(test_name)
-            compare_result = get_differences(expected, observation)
-            if compare_result is not None:
-                write_obs_to_file(observation, actual_fqn)
-                compare_text = '\n'.join([r for r in compare_result])
-                msg = f'Differences found in observation {expected.observation_id}\n' f'{compare_text}'
-                raise AssertionError(msg)
-        else:
-            write_obs_to_file(observation, actual_fqn)
-            assert False, f'nothing to compare to for {test_name}, missing {test_name}'
-    # assert False  # cause I want to see logging messages
-
-
-def _query_tap(query_string, _):
-    return Table.read(
-        '\nproposal_id\tdataRelease\tmetaRelease\n20BP40\t2020-02-25T20:36:31.230\t2019-02-25T20:36:31.230\n'.split(
-            '\n'
-        ),
-        format='ascii.tab',
-    )
+def update(observation, **kwargs):
+    """Called to fill multiple CAOM model elements and/or attributes (an n:n relationship between TDM attributes
+    and CAOM attributes).
+    """
+    logging.debug(f'Begin update for {observation.observation_id}')
+    uri = kwargs.get('uri')
+    file_info = kwargs.get('file_info')
+    for plane in observation.planes.values():
+        for artifact in plane.artifacts.values():
+            if uri == artifact.uri:
+                update_artifact_meta(artifact, file_info)
+    logging.debug('End update')
+    return observation

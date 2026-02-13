@@ -1,8 +1,8 @@
 working_directory: /usr/src/app
 # the netrc_filename value must be a fully-qualified name
 # netrc_filename: /usr/src/app/netrc
-# this is the name of the proxy certificate file supplied 
-# to the container. It must be a fully-qualified name. 
+# this is the name of the proxy certificate file supplied
+# to the container. It must be a fully-qualified name.
 # One of netrc_filename or proxy_filename must have a value.
 proxy_file_name: /usr/src/app/cadcproxy.pem
 # operational value is ivo://cadc.nrc.ca/ams
@@ -16,12 +16,14 @@ storage_inventory_tap_resource_id: ivo://cadc.nrc.ca/global/luskan
 # file that contains the list of entries to process
 todo_file_name: todo.txt
 data_sources:
-  - vos:test
+  - /data
 data_source_extensions:
   - .fits
+  - .png
+  - .rdb
 # values True False
 # when True, the application will look for files with
-# .fits, .gz, .json endings as defining the work to be 
+# .fits, .gz, .json endings as defining the work to be
 # done.
 use_local_files: True
 # values DEBUG INFO WARNING ERROR
@@ -53,25 +55,35 @@ progress_file_name: progress.txt
 collection: APERO
 scheme: cadc
 preview_scheme: cadc
+lookup:
+  instrument: SPIRou
+data_read_groups:
+  - ivo://cadc.nrc.ca/gms?CADC
+  - ivo://cadc.nrc.ca/gms?APERO-RW
+  - ivo://cadc.nrc.ca/gms?APERO-RO
+meta_read_groups:
+  - ivo://cadc.nrc.ca/gms?CADC
+  - ivo://cadc.nrc.ca/gms?APERO-RW
+  - ivo://cadc.nrc.ca/gms?APERO-RO
 #
 # CADC service execution metrics
 #
 observe_execution: True
 observable_directory: /usr/src/app/metrics
-# 
+#
 # if the pipeline for the collection tracks known failures, that occurs
 # in this location
-# 
+#
 rejected_file_name: rejected.yml
 rejected_directory: /usr/src/app/rejected
 #
-# for information that needs to be persisted between pipeline 
+# for information that needs to be persisted between pipeline
 # invocations, defaults to 'state.yml', and is found in 'working_directory'
 #
 state_file_name: state.yml
 #
-# if using a state file to time-box execution chunks, this is 
-# the interval, in minutes, that define the start and end of the 
+# if using a state file to time-box execution chunks, this is
+# the interval, in minutes, that define the start and end of the
 # time-box.
 #
 interval: 600
@@ -81,5 +93,7 @@ interval: 600
 # - store - calls cadc-data to put a file from local storage (use_local_files must be set to True)
 # - ingest - read the headers, write the xml to the endpoint found by resource_id
 # - modify - create a footprint and previews for an existing CAOM model record
-task_types: 
+task_types:
+  - store
   - ingest
+  - modify

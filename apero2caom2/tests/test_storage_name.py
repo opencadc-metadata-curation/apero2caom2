@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -66,32 +66,165 @@
 # ***********************************************************************
 #
 
-from caom2pipe import manage_composable as mc
+from re import search
 from apero2caom2 import APEROName
 
 
-def test_is_valid():
-    assert APEROName('anything').is_valid()
-    
+def test_is_valid(test_config):
+    assert APEROName(test_config.lookup.get('instrument'), ['ccf_plot_GL699_spirou_offline_udem.png']).is_valid()
+
 
 def test_storage_name(test_config):
-    test_obs_id = 'TEST_OBS_ID'
-    test_f_name = f'{test_obs_id}.fits'
-    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
+    # don't test obs_id, product_id, or destination uris, because those are set n the
+    # set_storage_name_from_local_preconditions method in main_app.py
+    test_f_name = 'Template_s1dw_GL699_sc1d_w_file_AB.fits'
+    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_config.lookup.get('instrument')}/{test_f_name}'
     for index, entry in enumerate(
         [
-            test_f_name, 
-            test_uri, 
-            f'https://localhost:8020/{test_f_name}', 
+            test_f_name,
+            test_uri,
+            f'https://localhost:8020/{test_f_name}',
             f'vos:goliaths/test/{test_f_name}',
             f'/tmp/{test_f_name}',
-        ]   
+        ]
     ):
-        test_subject = APEROName([entry])
-        assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
+        test_subject = APEROName(test_config.lookup.get('instrument'), [entry])
+        assert test_subject.file_id == test_f_name.replace('.fits', '').replace(
+            '.header', ''
+        ), f'wrong file id {index}'
         assert test_subject.file_uri == test_uri, f'wrong uri {index}'
-        assert test_subject.obs_id == test_obs_id, f'wrong obs id {index}'
-        assert test_subject.product_id == test_obs_id, f'wrong product id {index}'
         assert test_subject.source_names == [entry], f'wrong source names {index}'
-        assert test_subject.destination_uris == [test_uri], f'wrong uris {index} {test_subject}'
 
+
+def test_product_id(test_config):
+    for key, value in {
+        'APERO_v0.7_SPIROU_2426458e_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_E', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.fits': [
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
+            'LBL_FITS',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458p_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_P', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458s_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_S', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458t_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_T', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458v_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_V', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458e.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_E',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458p.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_P',
+            'spirou_simple_polarization_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458s.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_S',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458t.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_T',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458v.fits': [
+            'APERO_v0.7_SPIROU_2426458',
+            'DRS_POST_V',
+            'spirou_simple_spatial_spectral_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.png': [
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
+            'LBL_FITS',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png': [
+            'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
+            'LBL_FITS',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_2426458e.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_E', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458p.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_P', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458s.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_S', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458t.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_T', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_2426458v.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_V', 'spirou_simple_no_wcs.bp'],
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB.fits': [
+            'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB',
+            'TELLU_TEMP',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB.png': [
+            'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB',
+            'TELLU_TEMP',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB_256.png': [
+            'APERO_v0.7_SPIROU_Template_GL699_tellu_obj_AB',
+            'TELLU_TEMP',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.fits': [
+            'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
+            'TELLU_TEMP_S1DV',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB.png': [
+            'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
+            'TELLU_TEMP_S1DV',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB_256.png': [
+            'APERO_v0.7_SPIROU_Template_s1dv_GL699_sc1d_v_file_AB',
+            'TELLU_TEMP_S1DV',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB.fits': [
+            'APERO_v0.7_SPIROU_Template_s1dw_GL699_sc1d_w_file_AB',
+            'TELLU_TEMP_S1DW',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
+            'LBL_RDB_FITS',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
+            'LBL_RDB_FITS',
+            'spirou_derived_spatial_temporal.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699.rdb': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
+            'LBL_RDB',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699.rdb': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699',
+            'LBL_RDB2',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl_GL699_GL699_drift.rdb': [
+            'APERO_v0.7_SPIROU_lbl_GL699_GL699_drift',
+            'LBL_RDB_DRIFT',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699_drift.rdb': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699_drift',
+            'LBL_RDB2_DRIFT',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699_256.png': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699',
+            'LBL_RDB2',
+            'spirou_derived_no_wcs.bp',
+        ],
+        'APERO_v0.7_SPIROU_lbl2_GL699_GL699.png': [
+            'APERO_v0.7_SPIROU_lbl2_GL699_GL699',
+            'LBL_RDB2',
+            'spirou_derived_no_wcs.bp',
+        ],
+    }.items():
+        test_subject = APEROName(test_config.lookup.get('instrument'), [key])
+        assert test_subject.obs_id == value[0], f'obs_id key {key} value {value[0]}'
+        assert test_subject.product_id == value[1], f'product_id key {key} value {value[1]}'
+        assert test_subject.blueprint_name == value[2], f'blueprint name key {key} value {value[2]}'

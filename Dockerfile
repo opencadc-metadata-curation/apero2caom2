@@ -1,4 +1,4 @@
-ARG CADC_PYTHON_VERSION=3.12
+ARG CADC_PYTHON_VERSION=3.13
 FROM opencadc/matplotlib:${CADC_PYTHON_VERSION}-slim as builder
 ARG CADC_PYTHON_VERSION
 
@@ -9,7 +9,7 @@ RUN apt-get update --no-install-recommends && \
 WORKDIR /usr/src/app
 
 ARG OPENCADC_BRANCH=main
-ARG OPENCADC_REPO=opencadc
+ARG OPENCADC_REPO=opencadc-metadata-curation
 
 RUN pip install git+https://github.com/${OPENCADC_REPO}/caom2pipe@${OPENCADC_BRANCH}#egg=caom2pipe
 

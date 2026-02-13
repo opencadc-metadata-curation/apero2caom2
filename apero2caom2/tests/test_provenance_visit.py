@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -71,7 +71,6 @@ import logging
 import os
 
 from mock import Mock, patch
-from pytest import skip
 
 from astropy.table import Table
 from apero2caom2 import file2caom2_augmentation, main_app, provenance_augmentation
@@ -81,22 +80,19 @@ from apero2caom2.main_app import set_storage_name_from_local_preconditions
 
 
 def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/**/*.expected.xml')
+    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/provenance/*.expected.xml')
     metafunc.parametrize('test_name', obs_id_list)
 
 
-@skip(allow_module_level=True)
 @patch('apero2caom2.provenance_augmentation.query_tap_client')
-def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir):
+def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, change_test_dir):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
     query_mock.side_effect = _query_tap
     test_config.change_working_directory(tmp_path.as_posix())
     test_config.dump_blueprint = True
-
-    test_working_dir = os.path.dirname(test_name)
-    test_file_list = glob.glob(f'{test_working_dir}/*')
+    test_config.lookup['blueprint_directory'] = f'{test_data_dir}/blueprints'
 
     in_fqn = test_name.replace('.expected', '.in')
     actual_fqn = test_name.replace('expected', 'actual')
@@ -106,12 +102,14 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
     if os.path.exists(in_fqn):
         observation = read_obs_from_file(in_fqn)
 
-    for test_file_name in test_file_list:
-        if test_file_name.endswith('.fits') or '.xml' in test_file_name:
-            continue
+    file_names = glob.glob(test_name.replace('.expected.xml', '*.fits.header'))
+    for file_name in file_names:
+        logger.error(file_name)
+
         storage_name = main_app.APEROName(
-            instrument=test_config.lookup.get('instrument'), source_names=[test_file_name]
+            instrument=test_config.lookup.get('instrument'), source_names=[file_name.replace('.header', '')]
         )
+        storage_name._source_names = [file_name]
         set_storage_name_from_local_preconditions(storage_name, test_config.working_directory, logger)
         test_reporter = ExecutionReporter2(test_config)
         kwargs = {
@@ -132,7 +130,7 @@ def test_main_app(query_mock, test_name, test_config, tmp_path, change_test_dir)
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)
                 compare_text = '\n'.join([r for r in compare_result])
-                msg = f'Differences found in observation {expected.observation_id}\n' f'{compare_text}'
+                msg = f'Differences found in observation {expected.observation_id}\n{compare_text}'
                 raise AssertionError(msg)
         else:
             write_obs_to_file(observation, actual_fqn)
