@@ -186,13 +186,14 @@ def _update_artifact(artifact, headers, observation, plane):
         while len(artifact.parts) > 0:
             artifact.parts.popitem(0)
         return
-    extname = headers[0].get('EXTNAME')
-    if extname is None and len(headers) > 1:
-        extname = headers[1].get('EXTNAME')
-    if extname is not None:
-        _update_artifact_rename_parts(artifact, headers, observation)
-    else:
-        _update_artifact_remove_cutout_metadata(artifact)
+    if headers:
+        extname = headers[0].get('EXTNAME')
+        if extname is None and len(headers) > 1:
+            extname = headers[1].get('EXTNAME')
+        if extname is not None:
+            _update_artifact_rename_parts(artifact, headers, observation)
+        else:
+            _update_artifact_remove_cutout_metadata(artifact)
     logging.debug('End _udpate_artifact')
 
 
@@ -260,8 +261,8 @@ def _update_artifact_rename_parts(artifact, headers, observation):
             primary_chunk = Chunk()
             primary_header = headers[0]
             wcs_parser = FitsWcsParser(primary_header, observation.observation_id, 0)
-            wcs_parser.augment_temporal(primary_chunk, idx)
-            wcs_parser.augment_position(primary_chunk, idx)
+            wcs_parser.augment_temporal(primary_chunk)
+            wcs_parser.augment_position(primary_chunk)
             primary_chunk.position_axis_1 = None
             primary_chunk.position_axis_2 = None
             primary_chunk.time_axis = None

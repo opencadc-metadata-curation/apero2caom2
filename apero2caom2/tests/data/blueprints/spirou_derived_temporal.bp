@@ -1,0 +1,12 @@
+DerivedObservation.members = []
+Observation.metaProducer = apero2caom2/0.1.0
+Observation.algorithm.name = _get_algorithm_name()
+Observation.metaRelease = 2027-11-27T16:35:10.295217
+Plane.dataProductType = timeseries
+Plane.calibrationLevel = 3
+Plane.metaProducer = apero2caom2/0.1.0
+Plane.dataRelease = 2027-11-27T16:35:10.295217
+Plane.metaRelease = 2027-11-27T16:35:10.295217
+Artifact.productType = _get_product_type()
+Artifact.releaseType = data
+Artifact.metaProducer = apero2caom2/0.1.0

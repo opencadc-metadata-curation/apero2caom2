@@ -89,6 +89,8 @@ class APEROProvenanceVisitor:
         self.config = kwargs.get('config')
         self.storage_name = kwargs.get('storage_name')
         self.logger = logging.getLogger(__class__.__name__)
+        if not self.clients:
+            self.logger.warning('Need clients to continue')
 
     def visit(self):
         if '.fits' not in self.storage_name.file_name:
@@ -101,6 +103,10 @@ class APEROProvenanceVisitor:
 
         if isinstance(self.observation, SimpleObservation):
             self.logger.info(f'No provenance metadata for SimpleObservation. Returning.')
+            return self.observation
+
+        if not self.clients:
+            self.logger.info('No provenance metadata with no clients. Returning')
             return self.observation
 
         self.logger.debug(f'Begin visit for {self.observation.observation_id}')

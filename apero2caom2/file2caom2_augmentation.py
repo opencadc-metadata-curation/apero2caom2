@@ -173,7 +173,8 @@ class File2caom2Visitor:
             kwargs['product_id'] = self.storage_name.product_id
             kwargs['uri'] = self.storage_name.file_uri
             kwargs['file_info'] = self.storage_name.file_info.get(self.storage_name.file_uri)
-            kwargs['subject'] = self.clients._subject
+            if self.clients:
+                kwargs['subject'] = self.clients._subject
             try:
                 result = self.update_method_module.update(observation=self.observation, **kwargs)
                 if result is not None:
