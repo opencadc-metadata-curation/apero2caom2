@@ -164,7 +164,7 @@ class APEROProvenanceVisitor:
                                     prov_proposal_id = f'{prov_proposal_id};{temp_proposal_id}'
                                 else:
                                     prov_proposal_id = temp_proposal_id
-                                
+
                                 prov_data_release = entry['dataRelease']
                                 prov_meta_release = entry['metaRelease']
 
@@ -210,7 +210,12 @@ class APEROProvenanceVisitor:
                 self.observation.meta_read_groups.add(group)
 
         if prov_proposal_id and pi_name:
-            if self.observation.proposal and len(pi_name) < 128 and self.observation.proposal.pi_name not in pi_name:
+            if (
+                self.observation.proposal
+                and len(pi_name) < 128
+                and self.observation.proposal.pi_name
+                and self.observation.proposal.pi_name not in pi_name
+            ):
                 pi_name = f'{pi_name};{self.observation.proposal.pi_name}'
             self.observation.proposal = Proposal(id=prov_proposal_id, pi_name=pi_name)
         return self.observation

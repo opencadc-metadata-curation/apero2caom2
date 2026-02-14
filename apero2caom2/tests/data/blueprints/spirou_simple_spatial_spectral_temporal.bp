@@ -3,7 +3,6 @@ Observation.type = ['OBSTYPE'], default = None
 Observation.metaRelease = ['RELEASE', 'REL_DATE'], default = 2027-11-27T16:35:10.295217
 Observation.metaProducer = apero2caom2/0.1.0
 Observation.sequenceNumber = ['EXPNUM'], default = None
-# Observation.algorithm.name = _get_algorithm_name()
 Observation.instrument.name = ['INSTRUME'], default = None
 Observation.instrument.keywords = ['INSTMODE'], default = None
 Observation.proposal.id = ['RUNID'], default = None
@@ -52,9 +51,9 @@ Chunk.position.axis.function.cd21 = 0.0
 Chunk.position.axis.function.cd22 = 0.00035833
 Chunk.position.axis.function.dimension.naxis1 = 1
 Chunk.position.axis.function.dimension.naxis2 = 1
-Chunk.position.axis.function.refCoord.coord1.pix = 1.0
+Chunk.position.axis.function.refCoord.coord1.pix = 0.5
 Chunk.position.axis.function.refCoord.coord1.val = _get_ra()
-Chunk.position.axis.function.refCoord.coord2.pix = 1.0
+Chunk.position.axis.function.refCoord.coord2.pix = 0.5
 Chunk.position.axis.function.refCoord.coord2.val = _get_dec()
 Chunk.time.exposure = ['EXPTIME', 'INTTIME'], default = None
 Chunk.time.resolution = ['FRMTIME'], default = None
@@ -63,8 +62,6 @@ Chunk.time.trefpos = ['TREFPOS'], default = None
 Chunk.time.mjdref = ['MJDREF'], default = None
 Chunk.time.axis.axis.ctype = TIME
 Chunk.time.axis.axis.cunit = d
-Chunk.time.axis.error.syser = 1e-07
-Chunk.time.axis.error.rnder = 1e-07
 Chunk.time.axis.function.naxis = 1
 Chunk.time.axis.function.delta = ['FRMTIME'], default = None
 Chunk.time.axis.function.refCoord.pix = 0.5
@@ -75,8 +72,6 @@ Chunk.energy.axis.function.delta = 1560.0
 Chunk.energy.axis.function.naxis = 1
 Chunk.energy.axis.function.refCoord.pix = 0.5
 Chunk.energy.axis.function.refCoord.val = 955.0
-Chunk.energy.axis.error.rnder = 0.001
-Chunk.energy.axis.error.syser = 0.001
 Chunk.energy.resolvingPower = 73000.0
 Chunk.energy.specsys = TOPOCENT
 Chunk.energy.ssysobs = TOPOCENT
