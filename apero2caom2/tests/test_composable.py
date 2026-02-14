@@ -114,7 +114,7 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
 @patch('apero2caom2.data_source.APEROLocalFilesDataSource._initialize_end_dt')
 @patch(
     'apero2caom2.data_source.APEROLocalFilesDataSource.end_dt',
-    new_callable=PropertyMock(return_value=datetime(year=2025, month=11, day=1, hour=10, minute=5)),
+    new_callable=PropertyMock(return_value=datetime(year=2026, month=2, day=15, hour=10, minute=5)),
 )
 @patch('apero2caom2.file2caom2_augmentation.visit')
 @patch('apero2caom2.data_source.check_fitsverify')
@@ -149,7 +149,7 @@ def test_run_by_file_store_ingest_modify(
     clients_mock.return_value.data_client.info.side_effect = _mock_get_file_info
 
     test_state_fqn = f'{tmp_path}/state.yml'
-    start_time = datetime(year=2025, month=10, day=30, hour=10, minute=5)
+    start_time = datetime(year=2026, month=2, day=10, hour=10, minute=5)
     mc.State.write_bookmark(test_state_fqn, test_config.bookmark, start_time)
     mc.Config.write_to_file(test_config)
 

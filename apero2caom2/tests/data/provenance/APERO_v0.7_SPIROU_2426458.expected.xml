@@ -115,11 +115,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -138,10 +138,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -162,10 +158,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -211,11 +203,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -234,10 +226,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -258,10 +246,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -307,11 +291,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -330,10 +314,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -354,10 +334,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -403,11 +379,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -426,10 +402,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -450,10 +422,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -499,11 +467,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -522,10 +490,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -546,10 +510,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -595,11 +555,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -618,10 +578,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -642,10 +598,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -691,11 +643,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -714,10 +666,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -738,10 +686,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -787,11 +731,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -810,10 +754,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -834,10 +774,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -883,11 +819,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -906,10 +842,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -930,10 +862,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -979,11 +907,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1002,10 +930,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1026,10 +950,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1075,11 +995,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1098,10 +1018,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1122,10 +1038,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1171,11 +1083,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1194,10 +1106,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1218,10 +1126,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1312,11 +1216,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1335,10 +1239,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1359,10 +1259,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1408,11 +1304,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1431,10 +1327,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1455,10 +1347,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1549,11 +1437,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1572,10 +1460,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1596,10 +1480,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1645,11 +1525,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1668,10 +1548,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1692,10 +1568,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1741,11 +1613,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1764,10 +1636,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1788,10 +1656,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1837,11 +1701,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1860,10 +1724,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1884,10 +1744,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -1933,11 +1789,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -1956,10 +1812,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -1980,10 +1832,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2029,11 +1877,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2052,10 +1900,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2076,10 +1920,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2125,11 +1965,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2148,10 +1988,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2172,10 +2008,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2221,11 +2053,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2244,10 +2076,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2268,10 +2096,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2317,11 +2141,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2340,10 +2164,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2364,10 +2184,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2413,11 +2229,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2436,10 +2252,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2460,10 +2272,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2509,11 +2317,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2532,10 +2340,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2556,10 +2360,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2650,11 +2450,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2673,10 +2473,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2697,10 +2493,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2791,11 +2583,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2814,10 +2606,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2838,10 +2626,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2864,7 +2648,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -2902,11 +2686,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -2925,10 +2709,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -2949,10 +2729,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -2975,7 +2751,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3013,11 +2789,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3036,10 +2812,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3060,10 +2832,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3086,7 +2854,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3124,11 +2892,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3147,10 +2915,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3171,10 +2935,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3197,7 +2957,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3235,11 +2995,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3258,10 +3018,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3282,10 +3038,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3308,7 +3060,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3346,11 +3098,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3369,10 +3121,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3393,10 +3141,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3419,7 +3163,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3457,11 +3201,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3480,10 +3224,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3504,10 +3244,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3553,11 +3289,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3576,10 +3312,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3600,10 +3332,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3649,11 +3377,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3672,10 +3400,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3696,10 +3420,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3722,7 +3442,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3760,11 +3480,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3783,10 +3503,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3807,10 +3523,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3833,7 +3545,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>
@@ -3871,11 +3583,11 @@
                         </caom2:dimension>
                         <caom2:refCoord>
                           <caom2:coord1>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>269.44775</caom2:val>
                           </caom2:coord1>
                           <caom2:coord2>
-                            <caom2:pix>1.0</caom2:pix>
+                            <caom2:pix>0.5</caom2:pix>
                             <caom2:val>4.749388888888889</caom2:val>
                           </caom2:coord2>
                         </caom2:refCoord>
@@ -3894,10 +3606,6 @@
                         <caom2:ctype>WAVE</caom2:ctype>
                         <caom2:cunit>m</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>0.001</caom2:syser>
-                        <caom2:rnder>0.001</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.56e-06</caom2:delta>
@@ -3918,10 +3626,6 @@
                         <caom2:ctype>TIME</caom2:ctype>
                         <caom2:cunit>d</caom2:cunit>
                       </caom2:axis>
-                      <caom2:error>
-                        <caom2:syser>1e-07</caom2:syser>
-                        <caom2:rnder>1e-07</caom2:rnder>
-                      </caom2:error>
                       <caom2:function>
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>5.57192</caom2:delta>
@@ -3944,7 +3648,7 @@
                         <caom2:naxis>1</caom2:naxis>
                         <caom2:delta>1.0</caom2:delta>
                         <caom2:refCoord>
-                          <caom2:pix>1.0</caom2:pix>
+                          <caom2:pix>0.5</caom2:pix>
                           <caom2:val>4.0</caom2:val>
                         </caom2:refCoord>
                       </caom2:function>

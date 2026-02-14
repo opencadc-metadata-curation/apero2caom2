@@ -169,8 +169,7 @@ def _get_time_function_delta(header):
     return result
 
 
-def _get_time_function_val(parameter):
-    header = parameter.get('header')
+def _get_time_function_val(header):
     return header.get('MJDMID')
 
 

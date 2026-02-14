@@ -2,7 +2,7 @@
 <caom2:Observation xmlns:caom2="http://www.opencadc.org/caom2/xml/v2.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="caom2:DerivedObservation" caom2:id="00000000-0000-0000-80a9-e59f7bb85513">
   <caom2:collection>APERO</caom2:collection>
   <caom2:observationID>APERO_v0.7_SPIROU_lbl_GL699_GL699</caom2:observationID>
-  <caom2:metaRelease>2025-11-27T16:35:10.295217</caom2:metaRelease>
+  <caom2:metaRelease>2027-11-27T16:35:10.295217</caom2:metaRelease>
   <caom2:metaReadGroups>
     <caom2:groupURI>ivo://cadc.nrc.ca/gms?APERO-RW</caom2:groupURI>
     <caom2:groupURI>ivo://cadc.nrc.ca/gms?APERO-RO</caom2:groupURI>
@@ -22,7 +22,7 @@
   <caom2:planes>
     <caom2:plane caom2:id="24efaf22-5150-43f5-806a-28a2717b3e77" caom2:metaProducer="apero2caom2/0.1.0">
       <caom2:productID>LBL_RDB_FITS</caom2:productID>
-      <caom2:metaRelease>2025-11-27T16:35:10.295217</caom2:metaRelease>
+      <caom2:metaRelease>2027-11-27T16:35:10.295217</caom2:metaRelease>
       <caom2:metaReadGroups>
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?APERO-RW</caom2:groupURI>
         <caom2:groupURI>ivo://cadc.nrc.ca/gms?APERO-RO</caom2:groupURI>

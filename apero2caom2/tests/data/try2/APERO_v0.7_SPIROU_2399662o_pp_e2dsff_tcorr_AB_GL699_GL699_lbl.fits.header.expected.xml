@@ -22,8 +22,8 @@
   <caom2:targetPosition>
     <caom2:coordsys>FK5</caom2:coordsys>
     <caom2:coordinates>
-      <caom2:cval1>269.4477916666666</caom2:cval1>
-      <caom2:cval2>4.748861111111111</caom2:cval2>
+      <caom2:cval1>269.4485025</caom2:cval1>
+      <caom2:cval2>4.739420051</caom2:cval2>
     </caom2:coordinates>
   </caom2:targetPosition>
   <caom2:telescope>

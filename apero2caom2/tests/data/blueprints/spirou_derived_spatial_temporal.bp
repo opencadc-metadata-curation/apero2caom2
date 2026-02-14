@@ -37,18 +37,16 @@ Chunk = include
 Chunk.metaProducer = apero2caom2/0.1.0
 
 Chunk.time.exposure = ['EXPTIME', 'INTTIME'], default = None
-Chunk.time.resolution = ['FRMTIME'], default = None
+Chunk.time.resolution = _get_time_resolution()
 Chunk.time.timesys = UTC
 Chunk.time.trefpos = ['TREFPOS'], default = None
 Chunk.time.mjdref = ['MJDREF'], default = None
 Chunk.time.axis.axis.ctype = TIME
 Chunk.time.axis.axis.cunit = d
-Chunk.time.axis.error.syser = 1e-07
-Chunk.time.axis.error.rnder = 1e-07
 Chunk.time.axis.function.naxis = 1
-Chunk.time.axis.function.delta = ['FRMTIME'], default = None
+Chunk.time.axis.function.delta = _get_time_function_delta(header)
 Chunk.time.axis.function.refCoord.pix = 0.5
-Chunk.time.axis.function.refCoord.val = ['MJDMID'], default = None
+Chunk.time.axis.function.refCoord.val = _get_time_function_val(header)
 
 Chunk.position.axis.axis1.ctype = RA---TAN
 Chunk.position.axis.axis2.ctype = DEC--TAN
@@ -56,17 +54,13 @@ Chunk.position.coordsys = ['RADECSYS'], default = None
 Chunk.position.equinox = ['EQUINOX'], default = None
 Chunk.position.axis.axis1.cunit = deg
 Chunk.position.axis.axis2.cunit = deg
-Chunk.position.axis.error1.syser = ['CSYER1'], default = None
-Chunk.position.axis.error1.rnder = ['CRDER1'], default = None
-Chunk.position.axis.error2.syser = ['CSYER2'], default = None
-Chunk.position.axis.error2.rnder = ['CRDER2'], default = None
 Chunk.position.axis.function.cd11 = -0.00035833
 Chunk.position.axis.function.cd12 = 0.0
 Chunk.position.axis.function.cd21 = 0.0
 Chunk.position.axis.function.cd22 = 0.00035833
 Chunk.position.axis.function.dimension.naxis1 = 1
 Chunk.position.axis.function.dimension.naxis2 = 1
-Chunk.position.axis.function.refCoord.coord1.pix = 1.0
-Chunk.position.axis.function.refCoord.coord1.val = ['PP_RA'], default = None
-Chunk.position.axis.function.refCoord.coord2.pix = 1.0
-Chunk.position.axis.function.refCoord.coord2.val = ['PP_DEC'], default = None
+Chunk.position.axis.function.refCoord.coord1.pix = 0.5
+Chunk.position.axis.function.refCoord.coord1.val = _get_ra()
+Chunk.position.axis.function.refCoord.coord2.pix = 0.5
+Chunk.position.axis.function.refCoord.coord2.val = _get_dec()
