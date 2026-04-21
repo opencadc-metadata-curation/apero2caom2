@@ -109,6 +109,9 @@ class APEROProvenanceVisitor:
             self.logger.info('No provenance metadata with no clients. Returning')
             return self.observation
 
+        if self.observation is None:
+            raise CadcException(f'No observation to visit for {self.storage_name.file_uri}')
+
         self.logger.debug(f'Begin visit for {self.observation.observation_id}')
         counts = {}
         visit_plane = None

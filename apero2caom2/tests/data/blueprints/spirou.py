@@ -105,6 +105,11 @@ def _get_dec(parameter):
     return dec
 
 
+def _get_release_date(parameter):
+    header = parameter.get('header')
+    return header.get('ARELDATE')
+
+
 def _get_polarization_function_val(parameter):
     header = parameter.get('header')
     result = header.get('STOKES')

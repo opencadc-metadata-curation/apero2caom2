@@ -123,7 +123,7 @@ class APEROName(CFHTName):
         # time in RDB, Template
         # position in Template
         obs_cardinality = 'derived'
-        if self._product_id.startswith('DRS_POST_'):
+        if self._product_id.startswith('DRS_POST_') or self._suffix == 'o':
             obs_cardinality = 'simple'
         if self._file_name.endswith('.png') or self._file_name.endswith('.rdb'):
             wcs_axes = 'no_wcs'
@@ -132,6 +132,8 @@ class APEROName(CFHTName):
             if obs_cardinality == 'simple':
                 if self._suffix == 'p':
                     wcs_axes = 'polarization_spatial_spectral_temporal'
+                elif self._suffix == 'o':
+                    wcs_axes = 'spatial_temporal'
                 else:
                     wcs_axes = 'spatial_spectral_temporal'
             else:

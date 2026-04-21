@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2025.                            (c) 2025.
+#  (c) 2026.                            (c) 2026.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -80,7 +80,7 @@ from apero2caom2.main_app import set_storage_name_from_local_preconditions
 
 
 def pytest_generate_tests(metafunc):
-    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/try2/*.expected.xml')
+    obs_id_list = glob.glob(f'{metafunc.config.invocation_dir}/data/try3/*.expected.xml')
     metafunc.parametrize('test_name', obs_id_list)
 
 
@@ -94,9 +94,13 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
     test_config.dump_blueprint = True
     test_config.lookup['blueprint_directory'] = f'{test_data_dir}/blueprints'
 
-    test_file_name = test_name.replace('.expected.xml', '')
-    in_fqn = test_name.replace('.expected', '.in')
-    actual_fqn = test_name.replace('expected', 'actual')
+    replace_str = '.expected.xml'
+    in_fqn = test_name.replace(replace_str, '.in.xml')
+    expected_fqn = test_name.replace(replace_str, '.expected.xml')
+    actual_fqn = test_name.replace(replace_str, '.actual.xml')
+    test_file_name = test_name.replace(replace_str, '.fits.header')
+    if not os.path.exists(test_file_name):
+        test_file_name = test_name.replace('.fits.header.expected.xml', '.rdb')
     if os.path.exists(actual_fqn):
         os.unlink(actual_fqn)
     observation = None
@@ -121,8 +125,8 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
     if observation is None:
         assert False, f'Did not create observation for {test_name}'
     else:
-        if os.path.exists(test_name):
-            expected = read_obs_from_file(test_name)
+        if os.path.exists(expected_fqn):
+            expected = read_obs_from_file(expected_fqn)
             compare_result = get_differences(expected, observation)
             if compare_result is not None:
                 write_obs_to_file(observation, actual_fqn)

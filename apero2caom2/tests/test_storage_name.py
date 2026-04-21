@@ -102,7 +102,7 @@ def test_product_id(test_config):
         'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.fits': [
             'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
             'LBL_FITS',
-            'spirou_derived_spatial_temporal.bp',
+            'spirou_simple_spatial_temporal.bp',
         ],
         'APERO_v0.7_SPIROU_2426458p_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_P', 'spirou_simple_no_wcs.bp'],
         'APERO_v0.7_SPIROU_2426458s_256.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_S', 'spirou_simple_no_wcs.bp'],
@@ -136,12 +136,12 @@ def test_product_id(test_config):
         'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl.png': [
             'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
             'LBL_FITS',
-            'spirou_derived_no_wcs.bp',
+            'spirou_simple_no_wcs.bp',
         ],
         'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl_256.png': [
             'APERO_v0.7_SPIROU_2399662o_pp_e2dsff_tcorr_AB_GL699_GL699_lbl',
             'LBL_FITS',
-            'spirou_derived_no_wcs.bp',
+            'spirou_simple_no_wcs.bp',
         ],
         'APERO_v0.7_SPIROU_2426458e.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_E', 'spirou_simple_no_wcs.bp'],
         'APERO_v0.7_SPIROU_2426458p.png': ['APERO_v0.7_SPIROU_2426458', 'DRS_POST_P', 'spirou_simple_no_wcs.bp'],
