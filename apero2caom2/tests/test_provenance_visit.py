@@ -104,7 +104,6 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
 
     file_names = glob.glob(test_name.replace('.expected.xml', '*.fits.header'))
     for file_name in file_names:
-        logger.error(file_name)
 
         storage_name = main_app.APEROName(
             instrument=test_config.lookup.get('instrument'), source_names=[file_name.replace('.header', '')]
