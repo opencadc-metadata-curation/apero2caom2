@@ -162,7 +162,9 @@ class APEROProvenanceVisitor:
                             for entry in result:
                                 temp_proposal_id = entry['proposal_id']
                                 if (
-                                    prov_proposal_id and len(prov_proposal_id) < 128 and temp_proposal_id not in prov_proposal_id
+                                    prov_proposal_id
+                                    and len(prov_proposal_id) < 128
+                                    and temp_proposal_id not in prov_proposal_id
                                 ):
                                     prov_proposal_id = f'{prov_proposal_id};{temp_proposal_id}'
                                 else:
@@ -173,7 +175,6 @@ class APEROProvenanceVisitor:
 
                                 if visit_plane.provenance and prov_plane_uri not in visit_plane.provenance.inputs:
                                     visit_plane.provenance.inputs.add(prov_plane_uri)
-                                    # self.logger.debug(f'Adding provenance input {prov_plane_uri}')
                                 prov_data_release_dt = make_datetime(prov_data_release)
                                 if visit_plane.data_release is not None and prov_data_release_dt is not None:
                                     visit_plane.data_release = max(
@@ -181,7 +182,6 @@ class APEROProvenanceVisitor:
                                     )
                                 else:
                                     visit_plane.data_release = prov_data_release_dt
-                                # self.logger.debug(f'Setting data release date to {visit_plane.data_release}')
                                 prov_meta_release_dt = make_datetime(prov_meta_release)
                                 if visit_plane.meta_release is not None and prov_meta_release_dt is not None:
                                     visit_plane.meta_release = max(
@@ -189,13 +189,11 @@ class APEROProvenanceVisitor:
                                     )
                                 else:
                                     visit_plane.meta_release = prov_meta_release_dt
-                                # self.logger.debug(f'Setting meta release date to {visit_plane.meta_release}')
-                                group_name = f'ivo://cadc.nrc.ca/gms?CFHT-{prov_proposal_id}'
+                                group_name = f'ivo://cadc.nrc.ca/gms?CFHT-{temp_proposal_id}'
                                 add_these_groups.append(group_name)
                                 counts['plane'] = 1
                                 if obs_member_uri not in self.observation.members:
                                     self.observation.members.add(obs_member_uri)
-                                # self.logger.debug(f'Adding observation member {obs_member_uri}')
                                 counts['observation'] = 1
             else:
                 self.logger.debug(f'{fqn} is not a FITS file.')
@@ -212,7 +210,7 @@ class APEROProvenanceVisitor:
             for group in plane.meta_read_groups:
                 self.observation.meta_read_groups.add(group)
 
-        if prov_proposal_id and pi_name:
+        if temp_proposal_id and pi_name:
             if (
                 self.observation.proposal
                 and len(pi_name) < 128
@@ -220,7 +218,11 @@ class APEROProvenanceVisitor:
                 and self.observation.proposal.pi_name not in pi_name
             ):
                 pi_name = f'{pi_name};{self.observation.proposal.pi_name}'
-            self.observation.proposal = Proposal(id=prov_proposal_id, pi_name=pi_name)
+
+            if self.observation.proposal:
+                self.observation.proposal = Proposal(id=self.observation.proposal.id, pi_name=pi_name)
+            else:
+                self.observation.proposal = Proposal(id=temp_proposal_id, pi_name=pi_name)
         return self.observation
 
 
