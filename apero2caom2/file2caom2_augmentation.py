@@ -75,7 +75,7 @@ from os.path import basename, dirname, exists
 
 from caom2 import Algorithm, SimpleObservation, DerivedObservation
 from caom2utils.blueprints import ObsBlueprint
-from caom2utils.parsers import BlueprintParser, Caom2Exception, FitsParser
+from caom2utils.parsers import BlueprintParser, FitsParser
 from caom2utils.caomvalidator import validate
 from caom2utils.wcsvalidator import InvalidWCSError
 

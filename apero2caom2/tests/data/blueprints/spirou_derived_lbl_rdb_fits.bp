@@ -7,8 +7,8 @@ Observation.algorithm.name = _get_algorithm_name()
 Observation.instrument.name = ['INSTRUME'], default = None
 Observation.instrument.keywords = ['INSTMODE'], default = None
 Observation.target.name = ['DRSOBJN', 'OBJECT'], default = None
-Observation.target_position.point.cval1 = ['PP_RA', 'OBJRA'], default = None
-Observation.target_position.point.cval2 = ['PP_DEC', 'OBJDEC'], default = None
+Observation.target_position.point.cval1 = ['PP_RA'], default = None
+Observation.target_position.point.cval2 = ['PP_DEC'], default = None
 Observation.target_position.coordsys = ['RADECSYS'], default = None
 Observation.telescope.name = CFHT 3.6m
 Observation.telescope.geoLocationX = -5464301.771353686
@@ -61,6 +61,6 @@ Chunk.position.axis.function.cd22 = 0.00035833
 Chunk.position.axis.function.dimension.naxis1 = 1
 Chunk.position.axis.function.dimension.naxis2 = 1
 Chunk.position.axis.function.refCoord.coord1.pix = 0.5
-Chunk.position.axis.function.refCoord.coord1.val = _get_ra()
+Chunk.position.axis.function.refCoord.coord1.val = _get_lbl_fits_ra()
 Chunk.position.axis.function.refCoord.coord2.pix = 0.5
-Chunk.position.axis.function.refCoord.coord2.val = _get_dec()
+Chunk.position.axis.function.refCoord.coord2.val = _get_lbl_fits_dec()
