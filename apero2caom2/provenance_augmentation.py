@@ -128,6 +128,7 @@ class APEROProvenanceVisitor:
         for source_name in self.storage_name.source_names:
             pi_name = None
             prov_proposal_id = None
+            temp_proposal_id = None
             if 'fits' in source_name:
                 fqn = search_for_file(self.storage_name, self.config.working_directory).replace('.header', '')
                 self.logger.debug(f'Begin visit for {fqn}')
