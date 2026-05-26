@@ -186,12 +186,7 @@ def test_product_id(test_config):
         'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits': [
             'APERO_v0.7_SPIROU_lbl_GL699_GL699',
             'LBL_RDB_FITS',
-            'spirou_derived_spatial_temporal.bp',
-        ],
-        'APERO_v0.7_SPIROU_lbl_GL699_GL699.fits': [
-            'APERO_v0.7_SPIROU_lbl_GL699_GL699',
-            'LBL_RDB_FITS',
-            'spirou_derived_spatial_temporal.bp',
+            'spirou_derived_lbl_rdb_fits.bp',
         ],
         'APERO_v0.7_SPIROU_lbl_GL699_GL699.rdb': [
             'APERO_v0.7_SPIROU_lbl_GL699_GL699',

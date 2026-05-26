@@ -100,7 +100,7 @@ def test_main_app(query_mock, test_name, test_config, test_data_dir, tmp_path, c
     actual_fqn = test_name.replace(replace_str, '.actual.xml')
     test_file_name = test_name.replace(replace_str, '.fits.header')
     if not os.path.exists(test_file_name):
-        test_file_name = test_name.replace('.fits.header.expected.xml', '.rdb')
+        test_file_name = test_name.replace('.fits.header.expected.xml', '.rdb.txt')
     if os.path.exists(actual_fqn):
         os.unlink(actual_fqn)
     observation = None

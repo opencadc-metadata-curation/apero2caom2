@@ -125,19 +125,22 @@ class APEROName(CFHTName):
         obs_cardinality = 'derived'
         if self._product_id.startswith('DRS_POST_') or self._suffix == 'o':
             obs_cardinality = 'simple'
-        if self._file_name.endswith('.png') or self._file_name.endswith('.rdb'):
+        if self._file_name.endswith('.png') or self._file_name.endswith('.rdb') or self._file_name.endswith('.txt'):
             wcs_axes = 'no_wcs'
         else:
-            wcs_axes = 'no_wcs'
-            if obs_cardinality == 'simple':
-                if self._suffix == 'p':
-                    wcs_axes = 'polarization_spatial_spectral_temporal'
-                elif self._suffix == 'o':
-                    wcs_axes = 'spatial_temporal'
-                else:
-                    wcs_axes = 'spatial_spectral_temporal'
+            if self.product_id == 'LBL_RDB_FITS':
+                wcs_axes = 'lbl_rdb_fits'
             else:
-                wcs_axes = 'spatial_temporal'
+                wcs_axes = 'no_wcs'
+                if obs_cardinality == 'simple':
+                    if self._suffix == 'p':
+                        wcs_axes = 'polarization_spatial_spectral_temporal'
+                    elif self._suffix == 'o':
+                        wcs_axes = 'spatial_temporal'
+                    else:
+                        wcs_axes = 'spatial_spectral_temporal'
+                else:
+                    wcs_axes = 'spatial_temporal'
         self._blueprint_name = f'{self._instrument_value.lower()}_{obs_cardinality}_{wcs_axes}.bp'
         return self._blueprint_name
 
@@ -227,7 +230,7 @@ class APEROName(CFHTName):
 
     @staticmethod
     def remove_extensions(name):
-        return CFHTName.remove_extensions(name).replace('.rdb', '').replace('.png', '')
+        return CFHTName.remove_extensions(name).replace('.rdb', '').replace('.png', '').replace('.txt', '')
 
 
 class APERONoFheadVisitRunnerMeta(NoFheadVisitRunnerMeta):

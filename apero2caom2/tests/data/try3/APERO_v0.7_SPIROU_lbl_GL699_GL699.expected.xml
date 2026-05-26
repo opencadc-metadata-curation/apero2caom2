@@ -97,7 +97,118 @@
           <caom2:contentType>text/plain</caom2:contentType>
           <caom2:contentLength>256495</caom2:contentLength>
           <caom2:contentChecksum>md5:92a242aa45e95be7946fba407cba5552</caom2:contentChecksum>
-          <caom2:parts/>
+          <caom2:parts>
+            <caom2:part caom2:id="2ce0cbb4-9b69-42b1-a465-4492c5872856">
+              <caom2:name>0</caom2:name>
+              <caom2:chunks>
+                <caom2:chunk caom2:id="3ccb8b26-ca20-4ef2-8c65-113a5c4a91ca">
+                  <caom2:position>
+                    <caom2:axis>
+                      <caom2:axis1>
+                        <caom2:ctype>RA---TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis1>
+                      <caom2:axis2>
+                        <caom2:ctype>DEC--TAN</caom2:ctype>
+                        <caom2:cunit>deg</caom2:cunit>
+                      </caom2:axis2>
+                      <caom2:function>
+                        <caom2:dimension>
+                          <caom2:naxis1>1</caom2:naxis1>
+                          <caom2:naxis2>1</caom2:naxis2>
+                        </caom2:dimension>
+                        <caom2:refCoord>
+                          <caom2:coord1>
+                            <caom2:pix>0.5</caom2:pix>
+                            <caom2:val>269.4485025</caom2:val>
+                          </caom2:coord1>
+                          <caom2:coord2>
+                            <caom2:pix>0.5</caom2:pix>
+                            <caom2:val>4.739420051</caom2:val>
+                          </caom2:coord2>
+                        </caom2:refCoord>
+                        <caom2:cd11>-0.00035833</caom2:cd11>
+                        <caom2:cd12>0.0</caom2:cd12>
+                        <caom2:cd21>0.0</caom2:cd21>
+                        <caom2:cd22>0.00035833</caom2:cd22>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:coordsys>FK5</caom2:coordsys>
+                    <caom2:equinox>2000.0</caom2:equinox>
+                  </caom2:position>
+                  <caom2:time>
+                    <caom2:axis>
+                      <caom2:axis>
+                        <caom2:ctype>TIME</caom2:ctype>
+                        <caom2:cunit>d</caom2:cunit>
+                      </caom2:axis>
+                      <caom2:function>
+                        <caom2:naxis>1</caom2:naxis>
+                        <caom2:delta>6.44898148148148e-05</caom2:delta>
+                        <caom2:refCoord>
+                          <caom2:pix>0.5</caom2:pix>
+                          <caom2:val>59129.26870200672</caom2:val>
+                        </caom2:refCoord>
+                      </caom2:function>
+                    </caom2:axis>
+                    <caom2:timesys>UTC</caom2:timesys>
+                    <caom2:exposure>61.291</caom2:exposure>
+                    <caom2:resolution>5.57192</caom2:resolution>
+                  </caom2:time>
+                </caom2:chunk>
+              </caom2:chunks>
+            </caom2:part>
+            <caom2:part caom2:id="d65d949e-70e8-4360-bc7a-0fca442047ae">
+              <caom2:name>WAVE</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="6881ff24-5dc0-4209-85c8-6f28c6ac0dba">
+              <caom2:name>DV</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="a770d0b7-1ff1-4f69-a3c9-70dcd27f0198">
+              <caom2:name>SDV</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="e5f9deee-d8c3-4116-bb4a-8f8ccf96f6fc">
+              <caom2:name>D2V</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="5dddcedb-22b6-4cd2-a55e-ba057360e7ab">
+              <caom2:name>SD2V</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="4c34321c-7dce-47b1-9203-6e1dd6e70ad5">
+              <caom2:name>D3V</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="93ed7b0f-82cf-44ce-a011-179c9ad5d54c">
+              <caom2:name>SD3V</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="c5e555f1-c573-4d48-8f9f-301fbf398108">
+              <caom2:name>RDB0</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="8835b2e9-12bd-42d8-b570-4bbcb6478ff8">
+              <caom2:name>RDB</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+            <caom2:part caom2:id="bd96dd45-31f2-4fce-a2ae-d98e939aa388">
+              <caom2:name>PTABLE</caom2:name>
+              <caom2:productType>auxiliary</caom2:productType>
+              <caom2:chunks/>
+            </caom2:part>
+          </caom2:parts>
         </caom2:artifact>
       </caom2:artifacts>
     </caom2:plane>

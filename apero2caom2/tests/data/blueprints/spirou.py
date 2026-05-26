@@ -72,7 +72,7 @@ from caom2 import Chunk, DerivedObservation, Part, ProductType, SimpleObservatio
 from caom2utils.caom2blueprint import update_artifact_meta
 from caom2utils.wcs_parsers import FitsWcsParser
 from caom2pipe.astro_composable import build_ra_dec_as_deg
-from caom2pipe.manage_composable import to_int
+from caom2pipe.manage_composable import to_float, to_int
 
 
 def _get_algorithm_name(parameter):
@@ -142,7 +142,7 @@ def _get_product_type(parameter):
             result = ProductType.THUMBNAIL
         else:
             result = ProductType.PREVIEW
-    elif '.rdb' in uri:
+    elif '.rdb' in uri or '.rdb.txt' in uri:
         result = ProductType.AUXILIARY
     return result
 
@@ -183,12 +183,23 @@ def _get_time_resolution(parameter):
     return header.get('FRMTIME')
 
 
+def _get_lbl_fits_ra(parameter):
+    header = parameter.get('header')
+    return header.get('PP_RA')
+
+
+def _get_lbl_fits_dec(parameter):
+    header = parameter.get('header')
+    return header.get('PP_DEC')
+
+
 def _update_artifact(artifact, headers, observation, plane):
     logging.debug(f'Begin _udpate_artifact for {artifact.uri}')
-    if plane.product_id == 'LBL_RDB_FITS':
-        # remove all the parts - there is no metadata useful for CAOM in the headers for this file
-        while len(artifact.parts) > 0:
-            artifact.parts.popitem(0)
+    # the majority of the fits headers have WCS metadata in specifically-named HDUs, and those are handled in the
+    # _update_artifact_rename_parts methods. Any FITS files that is of product_id LBL_RDB_FITS has the WCS metadata
+    # in the 0th HDU, and so it has it's own method to ensure consistent part names and metadata.
+    if plane.product_id == 'LBL_RDB_FITS' and headers:
+        _update_lbl_rdb_fits_artifact(artifact, headers, observation, plane)
         return
     if headers:
         extname = headers[0].get('EXTNAME')
@@ -281,6 +292,48 @@ def _update_artifact_rename_parts(artifact, headers, observation):
         artifact.parts.add(part)
 
     logging.debug('End _update_artifact_rename_parts')
+
+
+def _update_lbl_rdb_fits_artifact(artifact, headers, observation, plane):
+    part = artifact.parts.get('0')
+    if len(part.chunks) == 0:
+        primary_chunk = Chunk()
+        part.chunks.append(primary_chunk)
+    else:
+        primary_chunk = part.chunks[0]
+    primary_header = headers[0]
+    wcs_parser = FitsWcsParser(primary_header, observation.observation_id, 0)
+    wcs_parser.augment_temporal(primary_chunk)
+    wcs_parser.augment_position(primary_chunk)
+    primary_chunk.position_axis_1 = None
+    primary_chunk.position_axis_2 = None
+    primary_chunk.time_axis = None
+    if primary_chunk.time and primary_chunk.time.axis and primary_chunk.time.axis.function:
+        primary_chunk.time.axis.function.delta = _get_time_function_delta(headers[0])
+
+    # clean up the remainder of the parts (no useful WCS information)
+    new_parts = []
+    old_parts = []
+    for part in artifact.parts.values():
+        if part.name == '0':
+            continue
+        else:
+            while len(part.chunks) > 0:
+                part.chunks.pop(0)
+            try:
+                idx = to_int(part.name)
+            except (ValueError, TypeError):
+                continue
+            new_part = Part(headers[idx].get('EXTNAME'))
+            new_part.product_type = ProductType.AUXILIARY
+            new_parts.append(new_part)
+            old_parts.append(part)
+
+    for part in old_parts:
+        artifact.parts.pop(part.name)
+
+    for part in new_parts:
+        artifact.parts.add(part)
 
 
 def _update_simple_groups(observation, plane, headers):

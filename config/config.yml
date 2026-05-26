@@ -21,6 +21,7 @@ data_source_extensions:
   - .fits
   - .png
   - .rdb
+  - .txt
 # values True False
 # when True, the application will look for files with
 # .fits, .gz, .json endings as defining the work to be
